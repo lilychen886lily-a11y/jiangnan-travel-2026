@@ -1,7 +1,11 @@
 import { Sun, PiggyBank } from 'lucide-react';
 import { motion } from 'motion/react';
 
-export default function SummaryCards() {
+interface SummaryCardsProps {
+  remainingCommonFund: number;
+}
+
+export default function SummaryCards({ remainingCommonFund }: SummaryCardsProps) {
   const cards = [
     {
       label: '今日天氣',
@@ -13,11 +17,11 @@ export default function SummaryCards() {
     },
     {
       label: '公積金剩餘',
-      value: '$ 12,450',
-      sub: '日圓 (JPY)',
+      value: `¥${Math.round(remainingCommonFund).toLocaleString()}`,
+      sub: '人民幣 (CNY)',
       icon: PiggyBank,
       color: 'text-secondary',
-      link: 'https://docs.google.com/spreadsheets/d/1fTQLHZEb4fxtGWOQxVbxV63RCus4CAMIGyMwYE_QFVw/edit?usp=sharing'
+      link: '#'
     }
   ];
 

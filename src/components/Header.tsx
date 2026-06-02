@@ -1,13 +1,18 @@
 import { Home } from 'lucide-react';
 import { motion } from 'motion/react';
 
-export default function Header() {
+interface HeaderProps {
+  onGoHome?: () => void;
+}
+
+export default function Header({ onGoHome }: HeaderProps) {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-4 bg-white/70 backdrop-blur-xl">
       <div className="flex items-center gap-3">
         <motion.button 
           whileTap={{ scale: 0.9 }}
-          className="text-[#0369a1] hover:opacity-80 transition-all font-bold"
+          onClick={onGoHome}
+          className="text-[#0369a1] hover:opacity-80 transition-all font-bold cursor-pointer"
         >
           <Home size={24} />
         </motion.button>

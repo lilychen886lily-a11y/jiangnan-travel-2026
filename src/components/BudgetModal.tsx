@@ -1,8 +1,8 @@
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Users, CreditCard, Hotel, Car, ReceiptText, Plus, Trash2, Edit2, Wallet, ArrowUpRight, ArrowDownLeft, Home } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Dispatch, SetStateAction } from 'react';
 
-interface ExpenseItem {
+export interface ExpenseItem {
   id: string;
   category: 'accommodation' | 'transportation' | 'pocket_money_in' | 'pocket_money_out';
   title: string;
@@ -15,9 +15,9 @@ interface ExpenseItem {
   pairIndex?: number; // For accommodation pairs (2 people per room)
 }
 
-const initialMembers = ['小花', '蘋果', '強哥', '京慧', '阿英', '泰哥', '俊賢', '小雯'];
+export const initialMembers = ['小花', '蘋果', '強哥', '京慧', '阿英', '泰哥', '俊賢', '小雯'];
 
-const initialExpenses: ExpenseItem[] = [
+export const initialExpenses: ExpenseItem[] = [
   { id: '1', category: 'accommodation', title: '烏鎮通安客棧 & 昭明書舍', date: '06/25', amount: 3506, unitPrice: 877, quantity: 4, description: '4間房 (含西柵門票+雙人正餐)', splitMembers: initialMembers },
   { id: '2', category: 'accommodation', title: '南潯花間堂·求恕里', date: '06/26', amount: 2901, unitPrice: 725, quantity: 4, description: '藏·倚云/玉霄房型共4間 (含早餐)', splitMembers: initialMembers },
   { id: '3', category: 'accommodation', title: '城際杭州西湖慶春路酒店', date: '06/27', amount: 1435, unitPrice: 359, quantity: 4, description: '高級雙床房 4間', splitMembers: initialMembers },
@@ -28,21 +28,17 @@ const initialExpenses: ExpenseItem[] = [
   { id: '8', category: 'transportation', title: '杭州 -> 上海 高鐵商務艙', date: '06/28', amount: 2400, unitPrice: 300, quantity: 8, description: '高鐵商務艙預估 ¥300/人', splitMembers: initialMembers },
 ];
 
-export default function BudgetModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+interface BudgetModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  expenses: ExpenseItem[];
+  setExpenses: Dispatch<SetStateAction<ExpenseItem[]>>;
+}
+
+export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: BudgetModalProps) {
   const [tab, setTab] = useState<'total' | 'individual' | 'pocket'>('total');
-  const [expenses, setExpenses] = useState<ExpenseItem[]>(initialExpenses);
   const [isEditing, setIsEditing] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<Partial<ExpenseItem>>({});
-
-  // Local storage persistence
-  useEffect(() => {
-    const saved = localStorage.getItem('trip_expenses');
-    if (saved) setExpenses(JSON.parse(saved));
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('trip_expenses', JSON.stringify(expenses));
-  }, [expenses]);
 
   const handleAdd = (category: 'accommodation' | 'transportation' | 'pocket_money_in' | 'pocket_money_out') => {
     const newItem: ExpenseItem = {
@@ -74,25 +70,28 @@ export default function BudgetModal({ isOpen, onClose }: { isOpen: boolean; onCl
   const totalTransportation = expenses.filter(e => e.category === 'transportation').reduce((sum, item) => sum + item.amount, 0);
   const grandTotal = totalAccommodation + totalTransportation;
   
-  // Pocket Money Calcs
+  // Cumulative Common Fund: 2000 per person
+  const totalCommonFundInput = 2000 * initialMembers.length; // 8 * 2000 = 16000
+  const remainingCommonFund = totalCommonFundInput - grandTotal;
+
+  // Pocket Money Calcs: Remaining Common Fund + other pocket money incomes - pocket money expenditures
   const pocketIn = expenses.filter(e => e.category === 'pocket_money_in').reduce((sum, item) => sum + item.amount, 0);
   const pocketOut = expenses.filter(e => e.category === 'pocket_money_out').reduce((sum, item) => sum + item.amount, 0);
-  const pocketBalance = pocketIn - pocketOut;
+  const pocketBalance = remainingCommonFund + pocketIn - pocketOut;
 
   // Individual Calc (Dynamic based on splitMembers)
   const memberTotals: { [name: string]: number } = {};
   initialMembers.forEach(m => memberTotals[m] = 0);
 
   expenses.forEach(exp => {
+    const splitCount = exp.splitMembers?.length || initialMembers.length;
     if (exp.category === 'accommodation' || exp.category === 'transportation' || exp.category === 'pocket_money_out') {
-      const share = exp.amount / (exp.splitMembers?.length || initialMembers.length);
+      const share = exp.amount / splitCount;
       exp.splitMembers?.forEach(m => {
         if (memberTotals[m] !== undefined) memberTotals[m] += share;
       });
     } else if (exp.category === 'pocket_money_in') {
-      // Income reduces what they owe? Or just tracked?
-      // Usually pocket money in is "collected", so we subtract if it's like a credit
-      const credit = exp.amount / (exp.splitMembers?.length || initialMembers.length);
+      const credit = exp.amount / splitCount;
       exp.splitMembers?.forEach(m => {
         if (memberTotals[m] !== undefined) memberTotals[m] -= credit;
       });
@@ -217,23 +216,70 @@ export default function BudgetModal({ isOpen, onClose }: { isOpen: boolean; onCl
               {tab === 'individual' && (
                 <div className="space-y-6">
                   <div className="bg-white rounded-3xl p-6 shadow-sm border border-outline-variant/10">
-                    <div className="flex items-center gap-2 mb-4">
-                      <Users className="text-primary" size={20} />
-                      <span className="font-bold text-primary">每人均分明細</span>
+                    <div className="flex items-center gap-2 mb-4 border-b pb-3 border-slate-100">
+                      <Users className="text-[#005d90]" size={22} />
+                      <div>
+                        <span className="font-extrabold text-[#005d90] text-lg block">個人分攤與結算明細</span>
+                        <span className="text-[10px] text-slate-400 font-bold block mt-0.5">預付公積金：¥2,000 / 人</span>
+                      </div>
                     </div>
                     <div className="space-y-4">
-                      {initialMembers.map((m, i) => (
-                        <div key={i} className="flex items-center justify-between p-4 bg-surface rounded-2xl border border-black/5">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold">{m.charAt(0)}</div>
-                            <span className="font-bold text-lg">{m}</span>
+                      {initialMembers.map((m, i) => {
+                        const accomShare = expenses.filter(e => e.category === 'accommodation').reduce((sum, item) => sum + ((item.splitMembers || initialMembers).includes(m) ? item.amount / (item.splitMembers?.length || initialMembers.length) : 0), 0);
+                        const transShare = expenses.filter(e => e.category === 'transportation').reduce((sum, item) => sum + ((item.splitMembers || initialMembers).includes(m) ? item.amount / (item.splitMembers?.length || initialMembers.length) : 0), 0);
+                        const pocketOutShare = expenses.filter(e => e.category === 'pocket_money_out').reduce((sum, item) => sum + ((item.splitMembers || initialMembers).includes(m) ? item.amount / (item.splitMembers?.length || initialMembers.length) : 0), 0);
+                        const pocketInShare = expenses.filter(e => e.category === 'pocket_money_in').reduce((sum, item) => sum + ((item.splitMembers || initialMembers).includes(m) ? item.amount / (item.splitMembers?.length || initialMembers.length) : 0), 0);
+                        
+                        const actualCost = accomShare + transShare + pocketOutShare - pocketInShare;
+                        const prepaid = 2000;
+                        const balance = prepaid - actualCost;
+                        
+                        return (
+                          <div key={i} className="bg-slate-50/50 rounded-2xl p-4 border border-slate-100 space-y-3">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2.5">
+                                <div className="w-9 h-9 rounded-full bg-[#005d90]/10 text-[#005d90] flex items-center justify-center font-black text-sm">{m.charAt(0)}</div>
+                                <span className="font-extrabold text-base text-slate-800">{m}</span>
+                              </div>
+                              <div>
+                                {balance >= 0 ? (
+                                  <span className="bg-emerald-50 text-emerald-700 text-xs px-2.5 py-1 rounded-full font-black inline-flex items-center gap-1">
+                                    應退 ¥{Math.round(balance).toLocaleString()}
+                                  </span>
+                                ) : (
+                                  <span className="bg-amber-50 text-amber-700 text-xs px-2.5 py-1 rounded-full font-black inline-flex items-center gap-1">
+                                    應補 ¥{Math.round(Math.abs(balance)).toLocaleString()}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                            
+                            {/* Breakdown */}
+                            <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-[11px] pt-2 border-t border-slate-100 font-bold text-slate-400">
+                              <div className="flex justify-between">
+                                <span>公積預交</span>
+                                <span className="text-slate-600">¥{prepaid}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span>住宿分攤</span>
+                                <span className="text-slate-600">¥{Math.round(accomShare).toLocaleString()}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span>交通分攤</span>
+                                <span className="text-slate-600">¥{Math.round(transShare).toLocaleString()}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span>零用分攤</span>
+                                <span className="text-slate-600">¥{Math.round(pocketOutShare - pocketInShare).toLocaleString()}</span>
+                              </div>
+                              <div className="flex justify-between col-span-2 pt-1.5 border-t border-dashed border-slate-200 text-xs font-extrabold text-[#005d90]">
+                                <span>實際應分擔</span>
+                                <span>¥{Math.round(actualCost).toLocaleString()}</span>
+                              </div>
+                            </div>
                           </div>
-                          <div className="text-right">
-                            <div className="text-xl font-black text-primary">¥{Math.round(memberTotals[m]).toLocaleString()}</div>
-                            <div className="text-[10px] text-on-surface-variant/60 font-bold italic">個人分擔額</div>
-                          </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
