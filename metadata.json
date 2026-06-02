@@ -1,0 +1,6 @@
+{
+  "name": "Jiangnan Trip Dashboard",
+  "description": "A travel companion app for a 5-day Jiangnan trip, featuring transportation info, budget tracking, and daily itinerary.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
