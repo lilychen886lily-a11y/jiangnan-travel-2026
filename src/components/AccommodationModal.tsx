@@ -11,17 +11,25 @@ interface Accommodation {
   roomType: string;
   image?: string;
   mapLink: string;
+  inclusions?: string[];
 }
 
 const accommodations: Accommodation[] = [
   {
     id: '1',
-    name: '烏鎮通安客棧 / 昭明書舍',
-    address: '浙江省嘉興市桐鄉市烏鎮西柵景區內',
+    name: '烏鎮通安客棧',
+    address: '浙江省嘉興市桐鄉市烏鎮西柵景區內通安客棧',
     phone: '0573-88731088',
     checkIn: '2026-06-25 14:00 入住',
-    roomType: '大床房C / 標間',
-    mapLink: 'https://uri.amap.com/search?keyword=烏鎮通安客棧&callnative=1'
+    roomType: '通安1號樓標間B/1號樓大床C/通寶樓標間B/枕水高級標間/昭明標間',
+    mapLink: 'https://uri.amap.com/search?keyword=烏鎮通安客棧&callnative=1',
+    inclusions: [
+      '住：通安客棧精品雙床/大床房 4間1晚 (含西柵精美雙人早餐)',
+      '游：西柵景區成人門票 8 張 (每間客房含2張)',
+      '食：明徽徽菜文化主題餐廳 雙人正餐 4 份 (共 8 人份套餐)',
+      '享：非遺漆扇 DIY 體驗 8 人份',
+      '贈：住宿期間無限次出入西柵景區 + 免費景區遊覽車 + 景區行李往返託運'
+    ]
   },
   {
     id: '2',
@@ -29,8 +37,13 @@ const accommodations: Accommodation[] = [
     address: '浙江省湖州市南潯區南潯鎮南西街109號',
     phone: '0572-3061111',
     checkIn: '2026-06-26 14:00 入住',
-    roomType: '藏·倚云 / 藏·玉霄',
-    mapLink: 'https://uri.amap.com/search?keyword=南潯花間堂求恕里&callnative=1'
+    roomType: '大床房 (藏·倚云 / 雙床房 藏·玉霄)',
+    mapLink: 'https://uri.amap.com/search?keyword=南潯花間堂求恕里&callnative=1',
+    inclusions: [
+      '住：高級特色大床房/雙床房共 4間1晚',
+      '食：含各客房雙人精緻营养早餐 (共8份)',
+      '享：花間堂特色人文休閒空間、免費香茗迎賓與管家貼心服務'
+    ]
   },
   {
     id: '3',
@@ -38,8 +51,13 @@ const accommodations: Accommodation[] = [
     address: '浙江省杭州市上城區慶春路153號',
     phone: '0571-87359555',
     checkIn: '2026-06-27 14:00 入住',
-    roomType: '高級雙床房',
-    mapLink: 'https://uri.amap.com/search?keyword=城際杭州西湖慶春路酒店&callnative=1'
+    roomType: '高級雙床房 (4 間)',
+    mapLink: 'https://uri.amap.com/search?keyword=城際杭州西湖慶春路酒店&callnative=1',
+    inclusions: [
+      '住：西湖景區周邊商務雙床房 4間1晚',
+      '食：含精美自助雙人早餐 4份 (共8人份)',
+      '贈：大廳迎賓飲品與手沖咖啡禮遇、免費高鐵站/景區出行諮詢'
+    ]
   },
   {
     id: '4',
@@ -47,8 +65,13 @@ const accommodations: Accommodation[] = [
     address: '上海市黃浦區人民路861號',
     phone: '021-63305599',
     checkIn: '2026-06-28 14:00 入住',
-    roomType: '水晶大床房',
-    mapLink: 'https://uri.amap.com/search?keyword=桔子水晶上海外灘豫園酒店&callnative=1'
+    roomType: '水晶大床房 / 標間',
+    mapLink: 'https://uri.amap.com/search?keyword=桔子水晶上海外灘豫園酒店&callnative=1',
+    inclusions: [
+      '住：繁華豫園外灘商圈晶選大床房/雙床房 4間1晚',
+      '食：含雙人美式/中式豐富早餐 4份 (共8人份)',
+      '享：客房專屬智能語音聲控、精緻水晶品牌香氛禮遇'
+    ]
   }
 ];
 
@@ -135,6 +158,21 @@ export default function AccommodationModal({ isOpen, onClose }: { isOpen: boolea
                         <a href={`tel:${hotel.phone}`} className="font-bold text-on-surface underline decoration-tertiary/30 underline-offset-4">{hotel.phone}</a>
                       </div>
                     </div>
+
+                    {/* Inclusions */}
+                    {hotel.inclusions && (
+                      <div className="pt-4 border-t border-slate-100 space-y-2">
+                        <div className="text-[10px] font-black text-[#005d90] uppercase tracking-widest leading-none">套票包含項目 / 尊享禮遇</div>
+                        <ul className="space-y-1.5 text-xs text-slate-600 font-medium bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                          {hotel.inclusions.map((inc, index) => (
+                            <li key={index} className="flex gap-2 items-start">
+                              <span className="text-[#005d90] font-black">•</span>
+                              <span className="leading-relaxed">{inc}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                   </div>
 
                   <div className="p-4 bg-surface-container-low flex gap-2">

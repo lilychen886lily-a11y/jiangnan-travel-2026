@@ -18,10 +18,10 @@ export interface ExpenseItem {
 export const initialMembers = ['小花', '蘋果', '強哥', '京慧', '阿英', '泰哥', '俊賢', '小雯'];
 
 export const initialExpenses: ExpenseItem[] = [
-  { id: '1', category: 'accommodation', title: '烏鎮通安客棧 & 昭明書舍', date: '06/25', amount: 3506, unitPrice: 877, quantity: 4, description: '4間房 (含西柵門票+雙人正餐)', splitMembers: initialMembers },
-  { id: '2', category: 'accommodation', title: '南潯花間堂·求恕里', date: '06/26', amount: 2901, unitPrice: 725, quantity: 4, description: '藏·倚云/玉霄房型共4間 (含早餐)', splitMembers: initialMembers },
-  { id: '3', category: 'accommodation', title: '城際杭州西湖慶春路酒店', date: '06/27', amount: 1435, unitPrice: 359, quantity: 4, description: '高級雙床房 4間', splitMembers: initialMembers },
-  { id: '4', category: 'accommodation', title: '桔子水晶上海外灘豫園酒店', date: '06/28', amount: 2404, unitPrice: 601, quantity: 4, description: '大床房 4間', splitMembers: initialMembers },
+  { id: '1', category: 'accommodation', title: '烏鎮通安客棧雙人套票', date: '06/25', amount: 3596, unitPrice: 899, quantity: 4, description: '4套 (含通安客棧1晚、西柵門票、明徽徽菜雙人餐、漆扇DIY、免費遊覽車/行李託運/雙人早餐)', splitMembers: initialMembers },
+  { id: '2', category: 'accommodation', title: '南潯花間堂·求恕里', date: '06/26', amount: 2900, unitPrice: 725, quantity: 4, description: '藏·倚云/玉霄房型共4間 (含早餐)', splitMembers: initialMembers },
+  { id: '3', category: 'accommodation', title: '城際杭州西湖慶春路酒店', date: '06/27', amount: 1436, unitPrice: 359, quantity: 4, description: '高級雙床房 4間', splitMembers: initialMembers },
+  { id: '4', category: 'accommodation', title: '桔子水晶上海外灘豫園酒店', date: '06/28', amount: 2404, unitPrice: 601, quantity: 4, description: '水晶大床房 4間', splitMembers: initialMembers },
   { id: '5', category: 'transportation', title: '機場 -> 烏鎮 包車', date: '06/25', amount: 800, unitPrice: 800, quantity: 1, description: '8人座商務包車', splitMembers: initialMembers },
   { id: '6', category: 'transportation', title: '烏鎮 -> 南潯 交通', date: '06/26', amount: 400, unitPrice: 400, quantity: 1, description: '包車/接駁', splitMembers: initialMembers },
   { id: '7', category: 'transportation', title: '南潯 -> 杭州 包車', date: '06/27', amount: 600, unitPrice: 600, quantity: 1, description: '包車前往杭州飯店', splitMembers: initialMembers },
@@ -148,7 +148,12 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
             <div className="flex-1 overflow-y-auto p-4 space-y-6 pb-32">
               {tab === 'total' && (
                 <>
-                  <SummaryCard grandTotal={grandTotal} accom={totalAccommodation} trans={totalTransportation} />
+                  <SummaryCard 
+                    grandTotal={grandTotal} 
+                    accom={totalAccommodation} 
+                    trans={totalTransportation} 
+                    remainingCommonFund={remainingCommonFund} 
+                  />
                   
                   <ExpenseSection 
                     title="住宿費用" 
@@ -475,24 +480,51 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
   );
 }
 
-function SummaryCard({ grandTotal, accom, trans }: any) {
+function SummaryCard({ grandTotal, accom, trans, remainingCommonFund }: any) {
   return (
-    <div className="bg-primary/5 rounded-[32px] p-6 border border-primary/10">
-      <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white"><CreditCard size={20} /></div>
-        <span className="text-primary font-bold">目前總金額預估</span>
+    <div className="bg-primary/5 rounded-[32px] p-6 border border-primary/10 space-y-5">
+      <div>
+        <div className="flex items-center gap-3 mb-1">
+          <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white"><CreditCard size={20} /></div>
+          <div>
+            <span className="text-primary font-bold block">目前交通 & 住宿總額</span>
+            <span className="text-[10px] text-on-surface-variant/60 font-bold block">公共預算支出扣除項目</span>
+          </div>
+        </div>
+        <div className="flex items-baseline gap-1">
+          <span className="text-4xl font-black text-primary">¥{Math.round(grandTotal).toLocaleString()}</span>
+        </div>
       </div>
-      <div className="flex items-baseline gap-1 mb-6">
-        <span className="text-4xl font-black text-primary">¥{Math.round(grandTotal).toLocaleString()}</span>
-      </div>
-      <div className="grid grid-cols-2 gap-4">
+
+      <div className="grid grid-cols-2 gap-3">
         <div className="bg-white p-4 rounded-2xl shadow-sm border border-black/5">
-          <div className="flex items-center gap-2 text-[10px] font-bold text-on-surface-variant/60 mb-1 uppercase tracking-wider"><Hotel size={10} /> 住宿總額</div>
-          <span className="text-xl font-bold">¥{accom.toLocaleString()}</span>
+          <div className="flex items-center gap-2 text-[10px] font-bold text-on-surface-variant/60 mb-1 uppercase tracking-wider"><Hotel size={14} className="text-[#005d90]" /> 住宿總額</div>
+          <span className="text-lg font-black text-slate-800">¥{Math.round(accom).toLocaleString()}</span>
         </div>
         <div className="bg-white p-4 rounded-2xl shadow-sm border border-black/5">
-          <div className="flex items-center gap-2 text-[10px] font-bold text-on-surface-variant/60 mb-1 uppercase tracking-wider"><Car size={10} /> 交通總額</div>
-          <span className="text-xl font-bold">¥{trans.toLocaleString()}</span>
+          <div className="flex items-center gap-2 text-[10px] font-bold text-on-surface-variant/60 mb-1 uppercase tracking-wider"><Car size={14} className="text-[#005d90]" /> 交通總額</div>
+          <span className="text-lg font-black text-slate-800">¥{Math.round(trans).toLocaleString()}</span>
+        </div>
+      </div>
+
+      {/* Public Fund breakdown details */}
+      <div className="bg-white p-4 rounded-2xl border border-primary/10 space-y-2.5 shadow-sm">
+        <div className="text-xs font-black text-primary border-b pb-1.5 border-primary/5 flex justify-between">
+          <span>公積金明細 (2,000 / 人)</span>
+          <span>8 人共 ¥16,000</span>
+        </div>
+        <div className="flex justify-between items-center text-xs font-bold text-slate-500">
+          <span>預交總公積金</span>
+          <span>¥16,000</span>
+        </div>
+        <div className="flex justify-between items-center text-xs font-bold text-slate-500">
+          <span>已支付 (住宿 + 交通)</span>
+          <span className="text-red-500">- ¥{Math.round(grandTotal).toLocaleString()}</span>
+        </div>
+        <div className="h-px bg-slate-100 my-1" />
+        <div className="flex justify-between items-center text-sm font-black text-[#00677d]">
+          <span>公積金剩餘 (自動轉入零用金)</span>
+          <span>¥{Math.round(remainingCommonFund).toLocaleString()}</span>
         </div>
       </div>
     </div>

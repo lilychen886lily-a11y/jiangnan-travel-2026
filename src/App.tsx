@@ -32,7 +32,30 @@ export default function App() {
   // Elevated state from BudgetModal for unified financial reactive calculations
   const [expenses, setExpenses] = useState<ExpenseItem[]>(() => {
     const saved = localStorage.getItem('trip_expenses');
-    return saved ? JSON.parse(saved) : initialExpenses;
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      return parsed.map((item: any) => {
+        if (item.id === '1' && (item.amount === 3506 || item.unitPrice === 877 || item.title.includes('昭明書舍'))) {
+          return {
+            ...item,
+            title: '烏鎮通安客棧雙人套票',
+            amount: 3596,
+            unitPrice: 899,
+            quantity: 4,
+            description: '4套 (含通安客棧1晚、西柵門票、明徽徽菜雙人餐、漆扇DIY、免費遊覽車/行李託運/雙人早餐)'
+          };
+        }
+        if (item.id === '2' && item.amount === 2901) {
+          return {
+            ...item,
+            amount: 2900,
+            unitPrice: 725
+          };
+        }
+        return item;
+      });
+    }
+    return initialExpenses;
   });
 
   useEffect(() => {
