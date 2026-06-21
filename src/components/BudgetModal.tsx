@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Users, CreditCard, Hotel, Car, ReceiptText, Plus, Trash2, Edit2, Wallet, ArrowUpRight, ArrowDownLeft, Home } from 'lucide-react';
+import { X, Users, CreditCard, Hotel, Car, ReceiptText, Plus, Trash2, Edit2, Wallet, ArrowUpRight, ArrowDownLeft, Home, Printer, Download, Sparkles, Check } from 'lucide-react';
 import { useState, useEffect, Dispatch, SetStateAction } from 'react';
 
 export interface ExpenseItem {
@@ -18,14 +18,13 @@ export interface ExpenseItem {
 export const initialMembers = ['小花', '蘋果', '強哥', '京慧', '阿英', '泰哥', '俊賢', '小雯'];
 
 export const initialExpenses: ExpenseItem[] = [
-  { id: '1', category: 'accommodation', title: '烏鎮通安客棧雙人套票', date: '06/25', amount: 3596, unitPrice: 899, quantity: 4, description: '4套 (含通安客棧1晚、西柵門票、明徽徽菜雙人餐、漆扇DIY、免費遊覽車/行李託運/雙人早餐)', splitMembers: initialMembers },
-  { id: '2', category: 'accommodation', title: '南潯花間堂·求恕里', date: '06/26', amount: 2900, unitPrice: 725, quantity: 4, description: '藏·倚云/玉霄房型共4間 (含早餐)', splitMembers: initialMembers },
-  { id: '3', category: 'accommodation', title: '城際杭州西湖慶春路酒店', date: '06/27', amount: 1436, unitPrice: 359, quantity: 4, description: '高級雙床房 4間', splitMembers: initialMembers },
-  { id: '4', category: 'accommodation', title: '桔子水晶上海外灘豫園酒店', date: '06/28', amount: 2404, unitPrice: 601, quantity: 4, description: '水晶大床房 4間', splitMembers: initialMembers },
-  { id: '5', category: 'transportation', title: '機場 -> 烏鎮 包車', date: '06/25', amount: 800, unitPrice: 800, quantity: 1, description: '8人座商務包車', splitMembers: initialMembers },
-  { id: '6', category: 'transportation', title: '烏鎮 -> 南潯 交通', date: '06/26', amount: 400, unitPrice: 400, quantity: 1, description: '包車/接駁', splitMembers: initialMembers },
-  { id: '7', category: 'transportation', title: '南潯 -> 杭州 包車', date: '06/27', amount: 600, unitPrice: 600, quantity: 1, description: '包車前往杭州飯店', splitMembers: initialMembers },
-  { id: '8', category: 'transportation', title: '杭州 -> 上海 高鐵商務艙', date: '06/28', amount: 2400, unitPrice: 300, quantity: 8, description: '高鐵商務艙預估 ¥300/人', splitMembers: initialMembers },
+  { id: '1', category: 'accommodation', title: '烏鎮西柵景區＋住宿套票', date: '06/25', amount: 3506.00, unitPrice: 876.50, quantity: 4, description: '4套 (含通安客棧大床/雙床房1晚、西柵門票8張、明徽徽菜精緻雙人正餐4份、非遺漆扇DIY、免費遊覽車/行李託運)', splitMembers: initialMembers },
+  { id: '2', category: 'accommodation', title: '南潯花間堂·求恕里', date: '06/26', amount: 2900.88, description: '藏·玉爵大床房 2間(¥1,314.92) / 倚雲雙床房 1間(¥812.34) / 倚雲大床房 1間(¥773.62)。(含精緻早餐8份)', splitMembers: initialMembers },
+  { id: '9', category: 'accommodation', title: '華住會金卡會員卡', date: '06/27', amount: 135.92, unitPrice: 16.99, quantity: 8, description: '團體辦理華住會員金卡 (單價 ¥16.99 × 8人) | 提供大宗酒店訂單折扣、免費早餐禮遇及房型升等權益，平均於城際、水晶等住處享最大化優惠', splitMembers: initialMembers },
+  { id: '3', category: 'accommodation', title: '杭州西湖大春路城際酒店 (慶春路)', date: '06/27', amount: 1434.56, description: '雙床房 3間(¥1,075.92) / 雙床房 1間(¥358.64)。(含自助雙人早餐4份/共8人份)', splitMembers: initialMembers },
+  { id: '4', category: 'accommodation', title: '上海外灘豫園桔子水晶酒店', date: '06/28', amount: 2444.08, description: '大床房 3間(¥1,803.36) / 高級雙床房 1間(¥640.72) 共4間。(含早餐8份)', splitMembers: initialMembers },
+  { id: '5', category: 'transportation', title: '全行程大包車費用 (上海－杭州－南京－烏鎮)', date: '06/25', amount: 2000.00, unitPrice: 100.00, quantity: 20, description: '實付包車款 (¥100 × 20計費單元) 全程管家隨行商務座大巴/用車', splitMembers: initialMembers },
+  { id: '8', category: 'transportation', title: '高鐵：杭州東站 ➝ 上海南站 (G7542 一等座)', date: '06/28', amount: 1104.00, unitPrice: 138.00, quantity: 8, description: '全體8人高鐵票 | 14:05 杭州東站開 ➔ 15:11 抵達上海南站 | 座位與實名證件詳見高鐵詳情', splitMembers: initialMembers },
 ];
 
 interface BudgetModalProps {
@@ -36,7 +35,7 @@ interface BudgetModalProps {
 }
 
 export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: BudgetModalProps) {
-  const [tab, setTab] = useState<'total' | 'individual' | 'pocket'>('total');
+  const [tab, setTab] = useState<'total' | 'individual' | 'pocket' | 'print'>('total');
   const [isEditing, setIsEditing] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<Partial<ExpenseItem>>({});
 
@@ -69,15 +68,95 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
   const totalAccommodation = expenses.filter(e => e.category === 'accommodation').reduce((sum, item) => sum + item.amount, 0);
   const totalTransportation = expenses.filter(e => e.category === 'transportation').reduce((sum, item) => sum + item.amount, 0);
   const grandTotal = totalAccommodation + totalTransportation;
+
+  // Calculates the precise accommodation share for each member based on their individual assigned rooms
+  const getMemberAccommodationShare = (m: string) => {
+    let total = 0;
+    
+    // Day 1: 06/25 (id: '1' or title containing 烏鎮)
+    const d1 = expenses.find(e => e.id === '1' || e.title.includes('烏鎮'));
+    if (d1) {
+      const splitList = d1.splitMembers || initialMembers;
+      if (splitList.includes(m)) {
+        total += d1.amount / splitList.length;
+      }
+    }
+    
+    // Day 2: 06/26 (id: '2' or title containing 南潯)
+    const d2 = expenses.find(e => e.id === '2' || e.title.includes('南潯'));
+    if (d2) {
+      // Room 1 (玉爵, ¥657.46): 強哥 & 京慧  -> each pays 657.46/2 = 328.73 (approx 328.73 / 2900.88 of total)
+      // Room 2 (玉爵, ¥657.46): 俊賢 & 小雯  -> each pays 657.46/2 = 328.73
+      // Room 3 (倚雲雙床, ¥812.34): 小花 & 蘋果 -> each pays 812.34/2 = 406.17
+      // Room 4 (倚雲大床, ¥773.62): 泰哥 & 阿英 -> each pays 773.62/2 = 386.81
+      const baseTotal = 2900.88;
+      const splitList = d2.splitMembers || initialMembers;
+      if (splitList.includes(m)) {
+        if (m === '強哥' || m === '京慧') {
+          total += d2.amount * (328.73 / baseTotal);
+        } else if (m === '俊賢' || m === '小雯') {
+          total += d2.amount * (328.73 / baseTotal);
+        } else if (m === '小花' || m === '蘋果') {
+          total += d2.amount * (406.17 / baseTotal);
+        } else if (m === '泰哥' || m === '阿英') {
+          total += d2.amount * (386.81 / baseTotal);
+        } else {
+          total += d2.amount / splitList.length;
+        }
+      }
+    }
+    
+    // Day 3: 06/27 (id: '3' or title containing 杭州西湖)
+    const d3 = expenses.find(e => e.id === '3' || e.title.includes('杭州') || e.title.includes('城際'));
+    if (d3) {
+      const splitList = d3.splitMembers || initialMembers;
+      if (splitList.includes(m)) {
+        total += d3.amount / splitList.length;
+      }
+    }
+    
+    // Day 4: 06/28 (id: '4' or title containing 桔子 or 水晶 or 上海)
+    const d4 = expenses.find(e => e.id === '4' || e.title.includes('桔子') || e.title.includes('水晶') || e.title.includes('上海'));
+    if (d4) {
+      // Room 1 (大床, ¥601.12): 強哥 & 京慧  -> each pays 300.56
+      // Room 2 (雙床, ¥640.72): 小花 & 蘋果  -> each pays 320.36
+      // Room 3 (大床, ¥601.12): 泰哥 & 阿英  -> each pays 300.56
+      // Room 4 (大床, ¥601.12): 小雯 & 俊賢  -> each pays 300.56
+      const baseTotal = 2444.08;
+      const splitList = d4.splitMembers || initialMembers;
+      if (splitList.includes(m)) {
+        if (m === '強哥' || m === '京慧' || m === '泰哥' || m === '阿英' || m === '小雯' || m === '俊賢') {
+          total += d4.amount * (300.56 / baseTotal);
+        } else if (m === '小花' || m === '蘋果') {
+          total += d4.amount * (320.36 / baseTotal);
+        } else {
+          total += d4.amount / splitList.length;
+        }
+      }
+    }
+    
+    // Fallback for custom or manually added accommodation expenses
+    const standardIds = ['1', '2', '3', '4'];
+    const otherAccoms = expenses.filter(e => e.category === 'accommodation' && !standardIds.includes(e.id) && !e.title.includes('烏鎮') && !e.title.includes('南潯') && !e.title.includes('城際') && !e.title.includes('桔子') && !e.title.includes('水晶'));
+    otherAccoms.forEach(e => {
+      const splitList = e.splitMembers || initialMembers;
+      if (splitList.includes(m)) {
+        total += e.amount / splitList.length;
+      }
+    });
+
+    return total;
+  };
   
   // Cumulative Common Fund: 2000 per person
   const totalCommonFundInput = 2000 * initialMembers.length; // 8 * 2000 = 16000
   const remainingCommonFund = totalCommonFundInput - grandTotal;
 
-  // Pocket Money Calcs: Remaining Common Fund + other pocket money incomes - pocket money expenditures
+  // Pocket Money Calcs: Dedicated Pocket Fund of 500 per person (total ¥4000)
+  const totalPocketFundInput = 500 * initialMembers.length; // 8 * 500 = 4000
   const pocketIn = expenses.filter(e => e.category === 'pocket_money_in').reduce((sum, item) => sum + item.amount, 0);
   const pocketOut = expenses.filter(e => e.category === 'pocket_money_out').reduce((sum, item) => sum + item.amount, 0);
-  const pocketBalance = remainingCommonFund + pocketIn - pocketOut;
+  const pocketBalance = totalPocketFundInput + pocketIn - pocketOut;
 
   // Individual Calc (Dynamic based on splitMembers)
   const memberTotals: { [name: string]: number } = {};
@@ -132,7 +211,8 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
               {[
                 { id: 'total', label: '主要明細', icon: CreditCard },
                 { id: 'pocket', label: '零用金', icon: Wallet },
-                { id: 'individual', label: '人均分攤', icon: Users }
+                { id: 'individual', label: '人均分攤', icon: Users },
+                { id: 'print', label: 'A4 請款單', icon: Printer }
               ].map(t => (
                 <button 
                   key={t.id}
@@ -225,67 +305,403 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                       <Users className="text-[#005d90]" size={22} />
                       <div>
                         <span className="font-extrabold text-[#005d90] text-lg block">個人分攤與結算明細</span>
-                        <span className="text-[10px] text-slate-400 font-bold block mt-0.5">預付公積金：¥2,000 / 人</span>
+                        <span className="text-[10px] text-slate-400 font-bold block mt-0.5">預收與分帳採「公積金款項」與「隨行零用金」分開記帳結算</span>
                       </div>
                     </div>
                     <div className="space-y-4">
                       {initialMembers.map((m, i) => {
-                        const accomShare = expenses.filter(e => e.category === 'accommodation').reduce((sum, item) => sum + ((item.splitMembers || initialMembers).includes(m) ? item.amount / (item.splitMembers?.length || initialMembers.length) : 0), 0);
+                        const accomShare = getMemberAccommodationShare(m);
                         const transShare = expenses.filter(e => e.category === 'transportation').reduce((sum, item) => sum + ((item.splitMembers || initialMembers).includes(m) ? item.amount / (item.splitMembers?.length || initialMembers.length) : 0), 0);
                         const pocketOutShare = expenses.filter(e => e.category === 'pocket_money_out').reduce((sum, item) => sum + ((item.splitMembers || initialMembers).includes(m) ? item.amount / (item.splitMembers?.length || initialMembers.length) : 0), 0);
                         const pocketInShare = expenses.filter(e => e.category === 'pocket_money_in').reduce((sum, item) => sum + ((item.splitMembers || initialMembers).includes(m) ? item.amount / (item.splitMembers?.length || initialMembers.length) : 0), 0);
                         
-                        const actualCost = accomShare + transShare + pocketOutShare - pocketInShare;
-                        const prepaid = 2000;
-                        const balance = prepaid - actualCost;
+                        // 1. Common Fund Settle: Prepaid 2000, actual cost is accomShare + transShare
+                        const commonCost = accomShare + transShare;
+                        const commonRefund = 2000 - commonCost;
+                        
+                        // 2. Pocket Money Settle: Prepaid 500 target, actual cost is pocketOutShare - pocketInShare
+                        const pocketCost = pocketOutShare - pocketInShare;
+                        const pocketRefund = 500 - pocketCost;
+                        
+                        // Combined Settlement: Settle the 2000 prepaid and collect the 500 pocket money deposit
+                        // If commonRefund > 0 (e.g. 365.14), and they owe 500 pocket money deposit:
+                        // balance = commonRefund - 500 = 365.14 - 500 = -134.86 (needs to supplement/补缴 134.86)
+                        const actualCost = commonCost + pocketCost;
+                        const balance = commonRefund - 500;
                         
                         return (
-                          <div key={i} className="bg-slate-50/50 rounded-2xl p-4 border border-slate-100 space-y-3">
-                            <div className="flex items-center justify-between">
+                          <div key={i} className="bg-slate-50/50 rounded-2xl p-4 border border-slate-200 shadow-sm hover:shadow-md transition-all space-y-3">
+                            <div className="flex items-center justify-between border-b pb-2 border-slate-200">
                               <div className="flex items-center gap-2.5">
                                 <div className="w-9 h-9 rounded-full bg-[#005d90]/10 text-[#005d90] flex items-center justify-center font-black text-sm">{m.charAt(0)}</div>
                                 <span className="font-extrabold text-base text-slate-800">{m}</span>
                               </div>
-                              <div>
+                              <div className="text-right">
+                                <span className="text-[10px] text-slate-400 font-bold block">本期合併應收退 (公積金結算 抵扣 500 零用錢)</span>
                                 {balance >= 0 ? (
-                                  <span className="bg-emerald-50 text-emerald-700 text-xs px-2.5 py-1 rounded-full font-black inline-flex items-center gap-1">
-                                    應退 ¥{Math.round(balance).toLocaleString()}
+                                  <span className="bg-emerald-50 text-emerald-700 text-xs px-2.5 py-0.5 rounded-full font-black inline-flex items-center gap-1 border border-emerald-100">
+                                    應退還 ¥{balance.toFixed(2)} (NT${Math.round(balance * 4.15).toLocaleString()})
                                   </span>
                                 ) : (
-                                  <span className="bg-amber-50 text-amber-700 text-xs px-2.5 py-1 rounded-full font-black inline-flex items-center gap-1">
-                                    應補 ¥{Math.round(Math.abs(balance)).toLocaleString()}
+                                  <span className="bg-amber-50 text-amber-700 text-xs px-2.5 py-0.5 rounded-full font-black inline-flex items-center gap-1 border border-amber-100">
+                                    應補繳 ¥{Math.abs(balance).toFixed(2)} (NT${Math.round(Math.abs(balance) * 4.15).toLocaleString()})
                                   </span>
                                 )}
                               </div>
                             </div>
                             
-                            {/* Breakdown */}
-                            <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-[11px] pt-2 border-t border-slate-100 font-bold text-slate-400">
-                              <div className="flex justify-between">
-                                <span>公積預交</span>
-                                <span className="text-slate-600">¥{prepaid}</span>
+                            {/* Two Channels Grid */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                              {/* Common Fund Account */}
+                              <div className="bg-white p-3 rounded-xl border border-slate-100 space-y-1.5 shadow-xs">
+                                <div className="flex justify-between items-center border-b pb-1 border-dashed border-slate-150">
+                                  <span className="font-black text-[#005d90] flex items-center gap-1 text-[11px]">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-[#005d90] block animate-pulse"></span>
+                                    公積金(大宗交通/宿)
+                                  </span>
+                                  <span className="text-[9px] font-extrabold text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded">已交 ¥2,000</span>
+                                </div>
+                                <div className="space-y-1 text-[11px] font-bold text-slate-500">
+                                  <div className="flex justify-between">
+                                    <span>住宿代付分攤</span>
+                                    <span className="text-slate-700">¥{accomShare.toFixed(2)}</span>
+                                  </div>
+                                  <div className="flex justify-between">
+                                    <span>交通包車分攤</span>
+                                    <span className="text-slate-700">¥{transShare.toFixed(2)}</span>
+                                  </div>
+                                  <div className="h-px bg-slate-100 my-1" />
+                                  <div className="flex justify-between text-slate-800 font-extrabold">
+                                    <span>公積費用總攤</span>
+                                    <span>¥{commonCost.toFixed(2)}</span>
+                                  </div>
+                                  <div className="flex justify-between font-black text-[11px] pt-0.5 border-t border-slate-50">
+                                    <span>公積金結算結果</span>
+                                    <span className={commonRefund >= 0 ? "text-emerald-600" : "text-amber-600"}>
+                                      {commonRefund >= 0 ? `應退 ¥${commonRefund.toFixed(2)}` : `應補 ¥${Math.abs(commonRefund).toFixed(2)}`}
+                                    </span>
+                                  </div>
+                                </div>
                               </div>
-                              <div className="flex justify-between">
-                                <span>住宿分攤</span>
-                                <span className="text-slate-600">¥{Math.round(accomShare).toLocaleString()}</span>
+
+                              {/* Pocket Money Account */}
+                              <div className="bg-white p-3 rounded-xl border border-slate-100 space-y-1.5 shadow-xs">
+                                <div className="flex justify-between items-center border-b pb-1 border-dashed border-slate-150">
+                                  <span className="font-black text-emerald-800 flex items-center gap-1 text-[11px]">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 block animate-pulse"></span>
+                                    隨手零用金
+                                  </span>
+                                  <span className="text-[9px] font-extrabold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded">本期補收 ¥500</span>
+                                </div>
+                                <div className="space-y-1 text-[11px] font-bold text-slate-500">
+                                  <div className="flex justify-between">
+                                    <span>零用金支出均攤</span>
+                                    <span className="text-slate-700">¥{pocketOutShare.toFixed(2)}</span>
+                                  </div>
+                                  <div className="flex justify-between">
+                                    <span>共同基金餘額返還</span>
+                                    <span className="text-green-600">- ¥{pocketInShare.toFixed(2)}</span>
+                                  </div>
+                                  <div className="h-px bg-slate-100 my-1" />
+                                  <div className="flex justify-between text-slate-800 font-extrabold">
+                                    <span>零用費用總攤</span>
+                                    <span>¥{pocketCost.toFixed(2)}</span>
+                                  </div>
+                                  <div className="flex justify-between font-black text-[11px] pt-0.5 border-t border-slate-50">
+                                    <span>零用金結算結果 (應退剩額)</span>
+                                    <span className={pocketRefund >= 0 ? "text-emerald-600" : "text-amber-600"}>
+                                      {pocketRefund >= 0 ? `餘額應退 ¥${pocketRefund.toFixed(2)}` : `超支應補 ¥${Math.abs(pocketRefund).toFixed(2)}`}
+                                    </span>
+                                  </div>
+                                </div>
                               </div>
-                              <div className="flex justify-between">
-                                <span>交通分攤</span>
-                                <span className="text-slate-600">¥{Math.round(transShare).toLocaleString()}</span>
-                              </div>
-                              <div className="flex justify-between">
-                                <span>零用分攤</span>
-                                <span className="text-slate-600">¥{Math.round(pocketOutShare - pocketInShare).toLocaleString()}</span>
-                              </div>
-                              <div className="flex justify-between col-span-2 pt-1.5 border-t border-dashed border-slate-200 text-xs font-extrabold text-[#005d90]">
-                                <span>實際應分擔</span>
-                                <span>¥{Math.round(actualCost).toLocaleString()}</span>
-                              </div>
+                            </div>
+
+                            {/* Final Sum Footer */}
+                            <div className="bg-[#005d90]/5 rounded-xl p-2.5 px-3 flex flex-wrap justify-between items-center text-xs font-black text-[#005d90] gap-2">
+                              <span>全行程實際總應分攤 (公積 + 零用)</span>
+                              <span className="text-sm">
+                                ¥{actualCost.toFixed(2)} 
+                                <span className="text-[10px] font-bold text-slate-400 ml-1.5">/ 折合約 NT${Math.round(actualCost * 4.15).toLocaleString()}</span>
+                              </span>
+                            </div>
+                            
+                            <div className="text-[10px] text-slate-400 italic font-medium px-1 text-center">
+                              說明：目前公積金預付 ¥2,000 已支付。本期補收隨行零用金 ¥500，扣除公積金應退 (¥{commonRefund.toFixed(2)}) 後，得出本期合併多退少補狀態。零用金支出 (¥{pocketCost.toFixed(2)}) 則從補收的 ¥500 中扣除，剩餘 ¥{pocketRefund.toFixed(2)} 留存於零用金專戶中後續結算、留存或退回。
                             </div>
                           </div>
                         );
                       })}
                     </div>
+                  </div>
+                </div>
+              )}
+
+              {tab === 'print' && (
+                <div className="space-y-6">
+                  {/* Action Bar */}
+                  <div className="bg-gradient-to-r from-primary to-[#0077b6] text-white rounded-3xl p-5 shadow-md flex flex-wrap gap-4 items-center justify-between">
+                    <div>
+                      <h4 className="font-extrabold text-lg flex items-center gap-1.5"><Sparkles size={18} /> 請款單與拆帳工具箱</h4>
+                      <p className="text-xs opacity-90 mt-0.5">點擊下方按鈕可調用系統列印，或一鍵複製 HTML A4 請款單文本。</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <button 
+                        onClick={() => window.print()}
+                        className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-4 py-2.5 rounded-xl text-xs font-black flex items-center gap-1.5 active:scale-95 transition-all animate-pulse"
+                      >
+                        <Printer size={14} />
+                        瀏覽器列印
+                      </button>
+                      <button 
+                        onClick={() => {
+                          const memberLines = initialMembers.map(m => {
+                            const accomShare = getMemberAccommodationShare(m);
+                            const transShare = expenses.filter(e => e.category === 'transportation').reduce((sum, item) => sum + ((item.splitMembers || initialMembers).includes(m) ? item.amount / (item.splitMembers?.length || initialMembers.length) : 0), 0);
+                            const pocketOutShare = expenses.filter(e => e.category === 'pocket_money_out').reduce((sum, item) => sum + ((item.splitMembers || initialMembers).includes(m) ? item.amount / (item.splitMembers?.length || initialMembers.length) : 0), 0);
+                            const pocketInShare = expenses.filter(e => e.category === 'pocket_money_in').reduce((sum, item) => sum + ((item.splitMembers || initialMembers).includes(m) ? item.amount / (item.splitMembers?.length || initialMembers.length) : 0), 0);
+                            
+                            const commonCost = accomShare + transShare;
+                            const commonRefund = 2000 - commonCost;
+                            const pocketCost = pocketOutShare - pocketInShare;
+                            const pocketRefund = 500 - pocketCost;
+                            // Settle 2000 prepaid and collect the 500 pocket money deposit:
+                            const totalRefund = commonRefund - 500; 
+                            
+                            const totalStatusLabel = totalRefund >= 0 ? '本期合併應退還' : '本期合併應補繳';
+                            
+                            return `• ${m}:\n` +
+                                   `  - 【公積金部分】預付 ¥2,000 (已付款) | 實際應攤 ¥${commonCost.toFixed(2)} | 結算：${commonRefund >= 0 ? '應退' : '應補'} ¥${Math.abs(commonRefund).toFixed(2)}\n` +
+                                   `  - 【零用金部分】本期應繳 ¥500        | 實際分攤 ¥${pocketCost.toFixed(2)} | 專戶餘額：¥${pocketRefund.toFixed(2)}\n` +
+                                   `  - 【本期合併多退少補】(公積金結算 抵扣 零用金應繳)：${totalStatusLabel} ¥${Math.abs(totalRefund).toFixed(2)} (折合約 NT$${Math.round(Math.abs(totalRefund) * 4.15).toLocaleString()})`;
+                          }).join('\n\n');
+
+                          const expenseItemLines = expenses
+                            .filter(e => e.category === 'accommodation' || e.category === 'transportation')
+                            .map((e, idx) => {
+                              const qtyPart = e.quantity ? ` [${e.quantity}${e.category === 'accommodation' ? '間' : '套'}]` : ' [1件]';
+                              const descPart = e.description ? ` (${e.description})` : '';
+                              return `${idx + 1}. ${e.title}${qtyPart}: ¥${e.amount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} (NT$${Math.round(e.amount * 4.15).toLocaleString()})${descPart}`;
+                            })
+                            .join('\n');
+
+                          const invoiceText = `【江南華東五日遊】8人請款與分帳結算單 (公積/零用獨立結算)\n` +
+                            `結算時間: 2026年6月28日\n` +
+                            `約定匯率: 1 RMB = 4.15 TWD\n\n` +
+                            `【款項清單】\n` +
+                            `${expenseItemLines}\n` +
+                            `------------------------------\n` +
+                            `總支出金額: ¥${grandTotal.toFixed(2)} 人民幣 (約合 NT$${Math.round(grandTotal * 4.15).toLocaleString()})\n` +
+                            `*(說明：因個人選擇房型單價相異，各人房費已按入住分配明細精確代入分攤)*\n\n` +
+                            `【每人已付與最終合併結算明細 (已付公積 ¥2,000，本期補收零用 ¥500，本次合併扣除分攤後多退少補)】\n` +
+                            `${memberLines}`;
+                          navigator.clipboard.writeText(invoiceText);
+                          alert('請款結算文字已成功複製到剪貼簿，可直接粘貼至 WhatsApp / LINE / 微信等社交軟體或 Excel！');
+                        }}
+                        className="bg-white text-primary px-4 py-2.5 rounded-xl text-xs font-black flex items-center gap-1.5 hover:bg-white/90 active:scale-95 transition-all shadow-sm"
+                      >
+                        <Download size={14} />
+                        複製到剪貼簿
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Printable A4 Container */}
+                  <div className="bg-white border border-slate-200 shadow-lg rounded-3xl p-6 md:p-10 space-y-8 font-sans text-slate-800 printable-section">
+                    
+                    {/* Invoice Letterhead */}
+                    <div className="border-b-2 border-slate-900 pb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                      <div>
+                        <span className="text-xs font-black tracking-widest text-[#0077b6] uppercase block mb-1">江南華東五日行結算</span>
+                        <h3 className="text-2xl font-black tracking-tight text-slate-900">費用結算與應退款明細表</h3>
+                        <p className="text-xs font-bold text-slate-400 mt-0.5">列印尺寸：A4 / PDF 標準請款單格式</p>
+                      </div>
+                      <div className="text-left md:text-right text-xs space-y-1 font-bold text-slate-500">
+                        <div><span className="text-slate-400">約定匯率：</span>1 RMB = 4.15 台幣</div>
+                        <div><span className="text-slate-400">已收資金：</span>公積金 ¥2,000 / 人 (預付已完成)</div>
+                        <div><span className="text-slate-400">本期補收：</span>隨行零用金 ¥500 / 人 (併入本次合併多退少補)</div>
+                        <div><span className="text-slate-400">結算日期：</span>2026年6月28日</div>
+                      </div>
+                    </div>
+
+                    {/* Table 1: Expenses */}
+                    <div className="space-y-3">
+                      <div className="text-sm font-black text-slate-900 flex items-center gap-1.5 border-l-4 border-slate-900 pl-2">
+                        <span>一、大宗代收代付項目明細</span>
+                      </div>
+                      <div className="overflow-x-auto font-bold">
+                        <table className="w-full text-left text-xs border-collapse">
+                          <thead>
+                            <tr className="border-b border-slate-300 text-[10px] text-slate-400 font-extrabold text-left">
+                              <th className="py-2.5">日期</th>
+                              <th className="py-2.5">項目與品項名稱</th>
+                              <th className="py-2.5 text-right">數量/房數</th>
+                              <th className="py-2.5 text-right font-black">金額 (RMB)</th>
+                              <th className="py-2.5 text-right font-black">折合台幣 (TWD)</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-100">
+                            {expenses.filter(e => e.category === 'accommodation' || e.category === 'transportation').map((exp) => (
+                              <tr key={exp.id}>
+                                <td className="py-3 font-semibold text-slate-400">{exp.date}</td>
+                                <td className="py-3 text-left">
+                                  <div className="font-extrabold text-slate-800">{exp.title}</div>
+                                  <div className="text-[10px] text-slate-400 font-bold">{exp.description}</div>
+                                </td>
+                                <td className="py-3 text-right font-bold text-slate-500">{exp.quantity ? `${exp.quantity} ${exp.category === 'accommodation' ? '間' : '套'}` : '1 件'}</td>
+                                <td className="py-3 text-right font-black text-slate-800">¥{exp.amount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                                <td className="py-3 text-right font-black text-[#005d90]">NT${Math.round(exp.amount * 4.15).toLocaleString()}</td>
+                              </tr>
+                            ))}
+                            <tr className="border-t-2 border-slate-900 bg-slate-50/50">
+                              <td colSpan={3} className="py-3.5 font-black text-slate-800 text-sm">付款大計合計 (Grand Total)</td>
+                              <td className="py-3.5 text-right font-black text-primary text-sm">¥{grandTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                              <td className="py-3.5 text-right font-black text-[#005d90] text-sm">NT${Math.round(grandTotal * 4.15).toLocaleString()}</td>
+                            </tr>
+                            <tr className="bg-primary/5 text-xs">
+                              <td colSpan={3} className="py-3 font-black text-primary">八人均攤應付額 (Per Person Avg)</td>
+                              <td className="py-3 text-right font-black text-primary">¥{(grandTotal / initialMembers.length).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                              <td className="py-3 text-right font-black text-[#005d90]">NT${Math.round((grandTotal / initialMembers.length) * 4.15).toLocaleString()}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    {/* Table 2: Room Allocations */}
+                    <div className="space-y-3">
+                      <div className="text-sm font-black text-slate-900 flex items-center gap-1.5 border-l-4 border-slate-900 pl-2">
+                        <span>二、登記入住與房間分配一覽表 (誰住哪一間)</span>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-medium">
+                        <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                          <div className="font-black text-[#005d90] mb-2 border-b pb-1">Day 1：06/25 烏鎮通安客棧</div>
+                          <ul className="space-y-1 text-slate-600 font-bold">
+                            <li className="flex justify-between"><span>• 房 1 (枕水大床)</span> <span className="text-slate-800">強哥 & 京慧 (¥876.50)</span></li>
+                            <li className="flex justify-between"><span>• 房 2 (精品雙床)</span> <span className="text-slate-800">泰哥 & 俊賢 (¥876.50)</span></li>
+                            <li className="flex justify-between"><span>• 房 3 (精品雙床)</span> <span className="text-slate-800">小雯 & 蘋果 (¥876.50)</span></li>
+                            <li className="flex justify-between"><span>• 房 4 (精品雙床)</span> <span className="text-slate-800">小花 & 阿英 (¥876.50)</span></li>
+                          </ul>
+                        </div>
+                        <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                          <div className="font-black text-[#005d90] mb-2 border-b pb-1">Day 2：06/26 南潯求恕里 (花間堂)</div>
+                          <ul className="space-y-1 text-slate-600 font-bold">
+                            <li className="flex justify-between"><span>• 房 1 (藏·玉爵大床)</span> <span className="text-slate-800">強哥 & 京慧 (¥657.46)</span></li>
+                            <li className="flex justify-between"><span>• 房 2 (藏·玉爵大床)</span> <span className="text-slate-800">俊賢 & 小雯 (¥657.46)</span></li>
+                            <li className="flex justify-between"><span>• 房 3 (藏·倚雲雙床)</span> <span className="text-slate-800">小花 & 蘋果 (¥812.34)</span></li>
+                            <li className="flex justify-between"><span>• 房 4 (藏·倚雲大床)</span> <span className="text-slate-800">泰哥 & 阿英 (¥773.62)</span></li>
+                          </ul>
+                        </div>
+                        <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                          <div className="font-black text-[#005d90] mb-2 border-b pb-1">Day 3：06/27 杭州慶春路城際</div>
+                          <ul className="space-y-1 text-slate-600 font-bold">
+                            <li className="flex justify-between"><span>• 房 1 (商務雙床)</span> <span className="text-slate-800">泰哥 & 俊賢 (¥358.64)</span></li>
+                            <li className="flex justify-between"><span>• 房 2 (商務雙床)</span> <span className="text-slate-800">小雯 & 蘋果 (¥358.64)</span></li>
+                            <li className="flex justify-between"><span>• 房 3 (商務雙床)</span> <span className="text-slate-800">小花 & 阿英 (¥358.64)</span></li>
+                            <li className="flex justify-between"><span>• 房 4 (商務雙床)</span> <span className="text-slate-800">強哥 & 京慧 (¥358.64)</span></li>
+                          </ul>
+                        </div>
+                        <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                          <div className="font-black text-[#005d90] mb-2 border-b pb-1">Day 4：06/28 桔子水晶外灘豫園</div>
+                          <ul className="space-y-1 text-slate-600 font-bold">
+                            <li className="flex justify-between"><span>• 房 1 (水晶大床)</span> <span className="text-slate-800">強哥 & 京慧 (¥601.12)</span></li>
+                            <li className="flex justify-between"><span>• 房 2 (高級雙床)</span> <span className="text-slate-800">小花 & 蘋果 (¥640.72)</span></li>
+                            <li className="flex justify-between"><span>• 房 3 (水晶大床)</span> <span className="text-slate-800">泰哥 & 阿英 (¥601.12)</span></li>
+                            <li className="flex justify-between"><span>• 房 4 (水晶大床)</span> <span className="text-slate-800">小雯 & 俊賢 (¥601.12)</span></li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Table 3: Settlement Splits */}
+                    <div className="space-y-3">
+                      <div className="text-sm font-black text-slate-900 flex items-center gap-1.5 border-l-4 border-slate-900 pl-2">
+                        <span>三、全團8位成員應攤/分款結算狀態一覽表 (公積與零用獨立計算)</span>
+                      </div>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left text-[11px] border-collapse font-extrabold text-right border border-slate-200">
+                          <thead>
+                            {/* Main headers */}
+                            <tr className="bg-slate-100 text-[10px] text-slate-700 font-black border-b border-slate-300">
+                              <th className="py-2 px-2 text-left border-r border-slate-200" rowSpan={2}>成員</th>
+                              <th className="py-1 px-2 text-center border-r border-slate-200 bg-[#005d90]/5 text-[#005d90]" colSpan={3}>【公積金部分】(住宿與主要大宗交通)</th>
+                              <th className="py-1 px-2 text-center border-r border-slate-200 bg-emerald-800/5 text-emerald-800" colSpan={3}>【隨手零用金部分】(小筆零散消費)</th>
+                              <th className="py-1 px-2 text-center text-slate-800 bg-slate-100" rowSpan={2}>本期合併<br/>總收退 (台幣)</th>
+                            </tr>
+                            {/* Sub headers */}
+                            <tr className="bg-slate-50 text-[9px] text-slate-400 font-extrabold border-b border-slate-300">
+                              <th className="py-1.5 text-right px-1.5 bg-[#005d90]/5">每人已交</th>
+                              <th className="py-1.5 text-right px-1.5 bg-[#005d90]/5">實際應攤</th>
+                              <th className="py-1.5 text-right px-1.5 border-r border-slate-200 bg-[#005d90]/10 text-[#005d90]">應退/補</th>
+                              
+                              <th className="py-1.5 text-right px-1.5 bg-amber-50/60 text-amber-800">本期補收</th>
+                              <th className="py-1.5 text-right px-1.5 bg-emerald-800/5">實際應攤</th>
+                              <th className="py-1.5 text-right px-1.5 border-r border-slate-200 bg-emerald-800/10 text-emerald-800">餘額退還</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-200">
+                            {initialMembers.map((m, i) => {
+                              const accomShare = getMemberAccommodationShare(m);
+                              const transShare = expenses.filter(e => e.category === 'transportation').reduce((sum, item) => sum + ((item.splitMembers || initialMembers).includes(m) ? item.amount / (item.splitMembers?.length || initialMembers.length) : 0), 0);
+                              const pocketOutShare = expenses.filter(e => e.category === 'pocket_money_out').reduce((sum, item) => sum + ((item.splitMembers || initialMembers).includes(m) ? item.amount / (item.splitMembers?.length || initialMembers.length) : 0), 0);
+                              const pocketInShare = expenses.filter(e => e.category === 'pocket_money_in').reduce((sum, item) => sum + ((item.splitMembers || initialMembers).includes(m) ? item.amount / (item.splitMembers?.length || initialMembers.length) : 0), 0);
+                              
+                              const commonCost = accomShare + transShare;
+                              const commonRefund = 2000 - commonCost;
+
+                              const pocketCost = pocketOutShare - pocketInShare;
+                              const pocketRefund = 500 - pocketCost;
+
+                              // Settle 2000 prepaid and collect the 500 pocket money deposit:
+                              const totalRefund = commonRefund - 500;
+                              const totalRefundTwd = Math.round(totalRefund * 4.15);
+
+                              return (
+                                <tr key={i} className="hover:bg-slate-50/40 text-slate-700">
+                                  {/* 名單 */}
+                                  <td className="py-2.5 px-2 font-black text-slate-800 text-left border-r border-slate-200">{m}</td>
+                                  
+                                  {/* 公積金 */}
+                                  <td className="py-2.5 px-1.5 text-slate-400 font-bold bg-[#005d90]/5">¥2,000</td>
+                                  <td className="py-2.5 px-1.5 text-slate-800 font-bold bg-[#005d90]/5">¥{commonCost.toFixed(2)}</td>
+                                  <td className={`py-2.5 px-1.5 font-black border-r border-slate-200 ${commonRefund >= 0 ? 'text-emerald-700 bg-emerald-500/5' : 'text-amber-700 bg-amber-500/5'}`}>
+                                    {commonRefund >= 0 ? `退 ¥${commonRefund.toFixed(2)}` : `補 ¥${Math.abs(commonRefund).toFixed(2)}`}
+                                  </td>
+                                  
+                                  {/* 零用金 */}
+                                  <td className="py-2.5 px-1.5 text-amber-700 bg-amber-50/40 font-bold">¥500</td>
+                                  <td className="py-2.5 px-1.5 text-slate-800 font-bold bg-emerald-800/5">¥{pocketCost.toFixed(2)}</td>
+                                  <td className={`py-2.5 px-1.5 font-black border-r border-slate-200 ${pocketRefund >= 0 ? 'text-emerald-700 bg-emerald-500/5' : 'text-amber-700 bg-amber-500/5'}`}>
+                                    {pocketRefund >= 0 ? `退 ¥${pocketRefund.toFixed(2)}` : `補 ¥${Math.abs(pocketRefund).toFixed(2)}`}
+                                  </td>
+
+                                  {/* 明細合併 */}
+                                  <td className={`py-2.5 px-2 font-black text-center ${totalRefund >= 0 ? 'text-[#005d90] bg-[#005d90]/5' : 'text-amber-800 bg-amber-500/10'}`}>
+                                    {totalRefund >= 0 ? `應退 ¥${totalRefund.toFixed(2)}` : `應補 ¥${Math.abs(totalRefund).toFixed(2)}`}
+                                    <div className="text-[9px] font-bold text-slate-400 mt-0.5">
+                                      (NT$${Math.abs(totalRefundTwd).toLocaleString()})
+                                    </div>
+                                  </td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    {/* Sign-off footer */}
+                    <div className="border-t border-dashed border-slate-300 pt-6 flex flex-col md:flex-row justify-between items-start md:items-center text-[10px] text-slate-400 font-bold gap-4">
+                      <div>
+                        備註：本經費表已由記帳系統嚴格覆核。各項住宿及包車金額皆依最終預訂實付單據入帳。<br />
+                        多退額度將於下船退房後，自公積金錢夾餘額直接結清轉發各人，如有出入請洽團長。
+                      </div>
+                      <div className="text-right">
+                        <div>核准人 / 簽章：__________________</div>
+                        <div className="mt-1 text-slate-300 font-mono">SYSTEM GENERATED DOC • SECURED</div>
+                      </div>
+                    </div>
+
                   </div>
                 </div>
               )}
@@ -299,14 +715,15 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                   { label: '明細', icon: CreditCard, active: tab === 'total', onClick: () => setTab('total') },
                   { label: '零用金', icon: Wallet, active: tab === 'pocket', onClick: () => setTab('pocket') },
                   { label: '分攤', icon: Users, active: tab === 'individual', onClick: () => setTab('individual') },
+                  { label: '請款單', icon: Printer, active: tab === 'print', onClick: () => setTab('print') },
                 ].map((item, idx) => (
                   <button 
                     key={idx}
                     onClick={item.onClick}
-                    className={`flex flex-col items-center justify-center px-4 py-2 rounded-2xl transition-all ${item.active ? 'bg-primary text-white shadow-lg shadow-primary/20 scale-105' : 'text-on-surface-variant/40'}`}
+                    className={`flex flex-col items-center justify-center px-3 py-1.5 rounded-2xl transition-all ${item.active ? 'bg-primary text-white shadow-lg shadow-primary/20 scale-105' : 'text-on-surface-variant/40'}`}
                   >
-                    <item.icon size={20} />
-                    <span className="text-[10px] font-bold mt-1 uppercase tracking-tighter">{item.label}</span>
+                    <item.icon size={18} />
+                    <span className="text-[9px] font-bold mt-1 uppercase tracking-tighter">{item.label}</span>
                   </button>
                 ))}
               </div>
@@ -462,6 +879,16 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                         <button onClick={handleSave} className="flex-[2] py-4 bg-primary text-white rounded-2xl font-bold shadow-lg shadow-primary/20 active:scale-95 transition-all text-sm uppercase tracking-widest">儲存並更新</button>
                       </div>
                       <button 
+                        onClick={() => {
+                          handleDelete(isEditing!);
+                          setIsEditing(null);
+                        }} 
+                        className="w-full py-3 bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 rounded-2xl font-bold active:scale-95 transition-all text-xs flex items-center justify-center gap-1.5 uppercase tracking-wider"
+                      >
+                        <Trash2 size={13} />
+                        刪除此項目
+                      </button>
+                      <button 
                         onClick={onClose}
                         className="w-full py-3 flex items-center justify-center gap-2 text-[10px] font-bold text-on-surface-variant/60 uppercase tracking-[0.2em] hover:text-primary transition-colors"
                       >
@@ -523,7 +950,7 @@ function SummaryCard({ grandTotal, accom, trans, remainingCommonFund }: any) {
         </div>
         <div className="h-px bg-slate-100 my-1" />
         <div className="flex justify-between items-center text-sm font-black text-[#00677d]">
-          <span>公積金剩餘 (自動轉入零用金)</span>
+          <span>公積金剩餘</span>
           <span>¥{Math.round(remainingCommonFund).toLocaleString()}</span>
         </div>
       </div>
@@ -548,12 +975,16 @@ function ExpenseSection({ title, icon, items, color, onEdit, onDelete, onAdd, is
       </div>
       <div className="space-y-3">
         {items.map((exp: any) => (
-          <div key={exp.id} className="bg-white p-4 rounded-[24px] border border-outline-variant/10 shadow-sm group hover:border-primary/20 transition-all">
+          <div 
+            key={exp.id} 
+            onClick={() => onEdit(exp.id)}
+            className="bg-white p-4 rounded-[24px] border border-outline-variant/10 shadow-sm group hover:border-[#00677d]/30 hover:shadow-md transition-all cursor-pointer"
+          >
             <div className="flex justify-between items-start mb-2">
-              <span className={`text-[10px] font-black ${textClass} bg-surface p-1 rounded px-2`}>{exp.date}</span>
-              <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button onClick={() => onEdit(exp.id)} className="p-2 bg-surface rounded-full text-on-surface-variant hover:text-primary"><Edit2 size={14} /></button>
-                <button onClick={() => onDelete(exp.id)} className="p-2 bg-surface rounded-full text-error hover:bg-error/10"><Trash2 size={14} /></button>
+              <span className={`text-[10px] font-black ${textClass} bg-[#00677d]/5 p-1 rounded px-2`}>{exp.date}</span>
+              <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
+                <button onClick={() => onEdit(exp.id)} className="p-2 bg-slate-50 hover:bg-slate-100 border border-slate-200/60 rounded-full text-slate-500 hover:text-primary transition-all flex items-center justify-center scale-95 hover:scale-105" title="編輯"><Edit2 size={13} /></button>
+                <button onClick={() => onDelete(exp.id)} className="p-2 bg-red-50 hover:bg-red-100 border border-red-100 rounded-full text-red-500 transition-all flex items-center justify-center scale-95 hover:scale-105" title="刪除"><Trash2 size={13} /></button>
               </div>
             </div>
             <div className="flex justify-between items-end">
@@ -561,7 +992,7 @@ function ExpenseSection({ title, icon, items, color, onEdit, onDelete, onAdd, is
                 <h4 className="font-bold text-on-surface text-lg leading-tight">{exp.title}</h4>
                 <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1">
                   {exp.unitPrice !== undefined && exp.quantity !== undefined && (
-                    <span className="text-[10px] font-bold text-primary bg-primary/5 px-1.5 py-0.5 rounded">
+                    <span className="text-[10px] font-bold text-[#00677d] bg-[#00677d]/5 px-1.5 py-0.5 rounded">
                       ¥{exp.unitPrice} × {exp.quantity}
                     </span>
                   )}

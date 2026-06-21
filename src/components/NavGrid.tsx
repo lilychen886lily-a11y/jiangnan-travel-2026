@@ -1,4 +1,4 @@
-import { PlaneTakeoff, Building2, MapPinned, CalendarDays, Wallet, Bus, ExternalLink, MoreHorizontal } from 'lucide-react';
+import { PlaneTakeoff, Building2, CalendarDays, Wallet, Bus, ExternalLink, MoreHorizontal } from 'lucide-react';
 import { motion } from 'motion/react';
 
 interface NavGridProps {
@@ -9,6 +9,15 @@ interface NavGridProps {
   onOpenBudget: () => void;
 }
 
+interface NavItem {
+  title: string;
+  icon: any;
+  color: string;
+  onClick?: () => void;
+  href?: string;
+  external?: boolean;
+}
+
 export default function NavGrid({
   onOpenTransport,
   onOpenFlight,
@@ -16,9 +25,9 @@ export default function NavGrid({
   onOpenItinerary,
   onOpenBudget
 }: NavGridProps) {
-  const navItems = [
+  const navItems: NavItem[] = [
     {
-      title: '機場接送/停車',
+      title: '交通資訊',
       icon: Bus,
       color: 'bg-[#0e7490]',
       onClick: onOpenTransport
@@ -34,13 +43,6 @@ export default function NavGrid({
       icon: Building2,
       color: 'bg-[#00677d]',
       onClick: onOpenAccommodation
-    },
-    {
-      title: '交通資訊',
-      icon: MapPinned,
-      color: 'bg-[#4da3ff]',
-      href: `https://uri.amap.com/search?keyword=${encodeURIComponent('江南旅遊')}&callnative=1`,
-      external: true
     },
     {
       title: '每日行程',

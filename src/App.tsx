@@ -31,35 +31,23 @@ export default function App() {
 
   // Elevated state from BudgetModal for unified financial reactive calculations
   const [expenses, setExpenses] = useState<ExpenseItem[]>(() => {
-    const saved = localStorage.getItem('trip_expenses');
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      return parsed.map((item: any) => {
-        if (item.id === '1' && (item.amount === 3506 || item.unitPrice === 877 || item.title.includes('昭明書舍'))) {
-          return {
-            ...item,
-            title: '烏鎮通安客棧雙人套票',
-            amount: 3596,
-            unitPrice: 899,
-            quantity: 4,
-            description: '4套 (含通安客棧1晚、西柵門票、明徽徽菜雙人餐、漆扇DIY、免費遊覽車/行李託運/雙人早餐)'
-          };
-        }
-        if (item.id === '2' && item.amount === 2901) {
-          return {
-            ...item,
-            amount: 2900,
-            unitPrice: 725
-          };
-        }
-        return item;
-      });
+    try {
+      const saved = localStorage.getItem('trip_expenses_v4');
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch (e) {
+      console.warn('LocalStorage is blocked or unavailable:', e);
     }
     return initialExpenses;
   });
 
   useEffect(() => {
-    localStorage.setItem('trip_expenses', JSON.stringify(expenses));
+    try {
+      localStorage.setItem('trip_expenses_v4', JSON.stringify(expenses));
+    } catch (e) {
+      console.warn('Failed to write to LocalStorage:', e);
+    }
   }, [expenses]);
 
   const totalAccommodation = expenses.filter(e => e.category === 'accommodation').reduce((sum, item) => sum + item.amount, 0);
