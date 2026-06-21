@@ -7,6 +7,7 @@ interface NavGridProps {
   onOpenAccommodation: () => void;
   onOpenItinerary: () => void;
   onOpenBudget: () => void;
+  onOpenOther: () => void;
 }
 
 interface NavItem {
@@ -23,7 +24,8 @@ export default function NavGrid({
   onOpenFlight,
   onOpenAccommodation,
   onOpenItinerary,
-  onOpenBudget
+  onOpenBudget,
+  onOpenOther
 }: NavGridProps) {
   const navItems: NavItem[] = [
     {
@@ -57,10 +59,10 @@ export default function NavGrid({
       onClick: onOpenBudget
     },
     {
-      title: '其它',
+      title: '其它指南 (必吃/必買/地鐵)',
       icon: MoreHorizontal,
       color: 'bg-[#64748b]',
-      href: '#other'
+      onClick: onOpenOther
     }
   ];
 

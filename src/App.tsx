@@ -21,6 +21,7 @@ import BudgetModal, { ExpenseItem, initialMembers, initialExpenses } from './com
 import AccommodationModal from './components/AccommodationModal';
 import FlightModal from './components/FlightModal';
 import TransportModal from './components/TransportModal';
+import OtherModal from './components/OtherModal';
 
 export default function App() {
   const [isItineraryOpen, setIsItineraryOpen] = useState(false);
@@ -28,6 +29,7 @@ export default function App() {
   const [isAccommodationOpen, setIsAccommodationOpen] = useState(false);
   const [isFlightOpen, setIsFlightOpen] = useState(false);
   const [isTransportOpen, setIsTransportOpen] = useState(false);
+  const [isOtherOpen, setIsOtherOpen] = useState(false);
 
   // Elevated state from BudgetModal for unified financial reactive calculations
   const [expenses, setExpenses] = useState<ExpenseItem[]>(() => {
@@ -72,6 +74,7 @@ export default function App() {
     if (tab === 'home' || tab === 'itinerary' || tab === 'transportation' || tab === 'budget') {
       setIsAccommodationOpen(false);
       setIsFlightOpen(false);
+      setIsOtherOpen(false);
     }
   };
 
@@ -81,6 +84,7 @@ export default function App() {
     setIsBudgetOpen(false);
     setIsAccommodationOpen(false);
     setIsFlightOpen(false);
+    setIsOtherOpen(false);
   };
 
   return (
@@ -116,6 +120,7 @@ export default function App() {
           onOpenAccommodation={() => setIsAccommodationOpen(true)}
           onOpenItinerary={() => setIsItineraryOpen(true)}
           onOpenBudget={() => setIsBudgetOpen(true)}
+          onOpenOther={() => setIsOtherOpen(true)}
         />
       </main>
 
@@ -131,6 +136,7 @@ export default function App() {
       <AccommodationModal isOpen={isAccommodationOpen} onClose={() => setIsAccommodationOpen(false)} />
       <FlightModal isOpen={isFlightOpen} onClose={() => setIsFlightOpen(false)} />
       <TransportModal isOpen={isTransportOpen} onClose={() => setIsTransportOpen(false)} />
+      <OtherModal isOpen={isOtherOpen} onClose={() => setIsOtherOpen(false)} />
     </div>
   );
 }
