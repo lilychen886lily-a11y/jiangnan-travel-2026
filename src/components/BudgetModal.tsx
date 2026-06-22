@@ -19,7 +19,9 @@ export const initialMembers = ['小花', '蘋果', '強哥', '京慧', '阿英',
 
 export const initialExpenses: ExpenseItem[] = [
   { id: '1', category: 'accommodation', title: '烏鎮西柵景區＋住宿套票', date: '06/25', amount: 3506.00, unitPrice: 876.50, quantity: 4, description: '4套 (含通安客棧大床/雙床房1晚、西柵門票8張、明徽徽菜精緻雙人正餐4份、非遺漆扇DIY、免費遊覽車/行李託運)', splitMembers: initialMembers },
-  { id: '2', category: 'accommodation', title: '南潯花間堂·求恕里', date: '06/26', amount: 2900.88, description: '藏·玉爵大床房 2間(¥1,314.92) / 倚雲雙床房 1間(¥812.34) / 倚雲大床房 1間(¥773.62)。(含精緻早餐8份)', splitMembers: initialMembers },
+  { id: '2-1', category: 'accommodation', title: '南潯花間堂·求恕里 (藏·玉霄大床房)', date: '06/26', amount: 1314.92, unitPrice: 657.46, quantity: 2, description: '大床房 2間 (俊賢、小雯、強哥、京慧)', splitMembers: ['俊賢', '小雯', '強哥', '京慧'] },
+  { id: '2-2', category: 'accommodation', title: '南潯花間堂·求恕里 (藏·倚雲大床房)', date: '06/26', amount: 773.62, unitPrice: 773.62, quantity: 1, description: '大床房 1間 (泰哥、阿英)', splitMembers: ['泰哥', '阿英'] },
+  { id: '2-3', category: 'accommodation', title: '南潯花間堂·求恕里 (藏·映桃家庭房)', date: '06/26', amount: 858.32, unitPrice: 858.32, quantity: 1, description: '家庭房 1間 (小花、蘋果)', splitMembers: ['小花', '蘋果'] },
   { id: '9', category: 'accommodation', title: '華住會金卡會員卡', date: '06/27', amount: 135.92, unitPrice: 16.99, quantity: 8, description: '團體辦理華住會員金卡 (單價 ¥16.99 × 8人) | 提供大宗酒店訂單折扣、免費早餐禮遇及房型升等權益，平均於城際、水晶等住處享最大化優惠', splitMembers: initialMembers },
   { id: '3', category: 'accommodation', title: '杭州西湖大春路城際酒店 (慶春路)', date: '06/27', amount: 1434.56, description: '雙床房 3間(¥1,075.92) / 雙床房 1間(¥358.64)。(含自助雙人早餐4份/共8人份)', splitMembers: initialMembers },
   { id: '4', category: 'accommodation', title: '上海外灘豫園桔子水晶酒店', date: '06/28', amount: 2444.08, description: '大床房 3間(¥1,803.36) / 高級雙床房 1間(¥640.72) 共4間。(含早餐8份)', splitMembers: initialMembers },
@@ -82,29 +84,14 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
       }
     }
     
-    // Day 2: 06/26 (id: '2' or title containing 南潯)
-    const d2 = expenses.find(e => e.id === '2' || e.title.includes('南潯'));
-    if (d2) {
-      // Room 1 (玉爵, ¥657.46): 強哥 & 京慧  -> each pays 657.46/2 = 328.73 (approx 328.73 / 2900.88 of total)
-      // Room 2 (玉爵, ¥657.46): 俊賢 & 小雯  -> each pays 657.46/2 = 328.73
-      // Room 3 (倚雲雙床, ¥812.34): 小花 & 蘋果 -> each pays 812.34/2 = 406.17
-      // Room 4 (倚雲大床, ¥773.62): 泰哥 & 阿英 -> each pays 773.62/2 = 386.81
-      const baseTotal = 2900.88;
-      const splitList = d2.splitMembers || initialMembers;
-      if (splitList.includes(m)) {
-        if (m === '強哥' || m === '京慧') {
-          total += d2.amount * (328.73 / baseTotal);
-        } else if (m === '俊賢' || m === '小雯') {
-          total += d2.amount * (328.73 / baseTotal);
-        } else if (m === '小花' || m === '蘋果') {
-          total += d2.amount * (406.17 / baseTotal);
-        } else if (m === '泰哥' || m === '阿英') {
-          total += d2.amount * (386.81 / baseTotal);
-        } else {
-          total += d2.amount / splitList.length;
-        }
+    // Day 2: 06/26 (Nanxun / 花間堂) - split dynamically if room types are different!
+    const day2Accoms = expenses.filter(e => e.category === 'accommodation' && (e.date === '06/26' || e.id.match(/^2(-\d+)?$/) || e.title.includes('南潯')));
+    day2Accoms.forEach(e => {
+      const splitList = e.splitMembers || [];
+      if (splitList.includes(m) && splitList.length > 0) {
+        total += e.amount / splitList.length;
       }
-    }
+    });
     
     // Day 3: 06/27 (id: '3' or title containing 杭州西湖)
     const d3 = expenses.find(e => e.id === '3' || e.title.includes('杭州') || e.title.includes('城際'));
@@ -136,8 +123,17 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
     }
     
     // Fallback for custom or manually added accommodation expenses
-    const standardIds = ['1', '2', '3', '4'];
-    const otherAccoms = expenses.filter(e => e.category === 'accommodation' && !standardIds.includes(e.id) && !e.title.includes('烏鎮') && !e.title.includes('南潯') && !e.title.includes('城際') && !e.title.includes('桔子') && !e.title.includes('水晶'));
+    const standardIds = ['1', '2', '3', '4', '2-1', '2-2', '2-3'];
+    const otherAccoms = expenses.filter(e => 
+      e.category === 'accommodation' && 
+      !standardIds.includes(e.id) && 
+      !e.id.match(/^2(-\d+)?$/) &&
+      !e.title.includes('烏鎮') && 
+      !e.title.includes('南潯') && 
+      !e.title.includes('城際') && 
+      !e.title.includes('桔子') && 
+      !e.title.includes('水晶')
+    );
     otherAccoms.forEach(e => {
       const splitList = e.splitMembers || initialMembers;
       if (splitList.includes(m)) {
@@ -586,9 +582,9 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                         <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
                           <div className="font-black text-[#005d90] mb-2 border-b pb-1">Day 2：06/26 南潯求恕里 (花間堂)</div>
                           <ul className="space-y-1 text-slate-600 font-bold">
-                            <li className="flex justify-between"><span>• 房 1 (藏·玉爵大床)</span> <span className="text-slate-800">強哥 & 京慧 (¥657.46)</span></li>
-                            <li className="flex justify-between"><span>• 房 2 (藏·玉爵大床)</span> <span className="text-slate-800">俊賢 & 小雯 (¥657.46)</span></li>
-                            <li className="flex justify-between"><span>• 房 3 (藏·倚雲雙床)</span> <span className="text-slate-800">小花 & 蘋果 (¥812.34)</span></li>
+                            <li className="flex justify-between"><span>• 房 1 (藏·玉霄大床)</span> <span className="text-slate-800">強哥 & 京慧 (¥657.46)</span></li>
+                            <li className="flex justify-between"><span>• 房 2 (藏·玉霄大床)</span> <span className="text-slate-800">俊賢 & 小雯 (¥657.46)</span></li>
+                            <li className="flex justify-between"><span>• 房 3 (藏·映桃家庭房)</span> <span className="text-slate-800">小花 & 蘋果 (¥858.32)</span></li>
                             <li className="flex justify-between"><span>• 房 4 (藏·倚雲大床)</span> <span className="text-slate-800">泰哥 & 阿英 (¥773.62)</span></li>
                           </ul>
                         </div>
