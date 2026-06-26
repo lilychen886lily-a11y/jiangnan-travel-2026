@@ -63,6 +63,16 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
     }
   };
 
+  const handleCancel = () => {
+    if (isEditing) {
+      const currentItem = expenses.find(e => e.id === isEditing);
+      if (currentItem && currentItem.title === '新項目' && currentItem.amount === 0) {
+        setExpenses(expenses.filter(e => e.id !== isEditing));
+      }
+      setIsEditing(null);
+    }
+  };
+
   const handleDelete = (id: string) => {
     setExpenses(expenses.filter(exp => exp.id !== id));
   };
@@ -148,8 +158,8 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
   const totalCommonFundInput = 2000 * initialMembers.length; // 8 * 2000 = 16000
   const remainingCommonFund = totalCommonFundInput - grandTotal;
 
-  // Pocket Money Calcs: Dedicated Pocket Fund of 500 per person (total ¥4000)
-  const totalPocketFundInput = 500 * initialMembers.length; // 8 * 500 = 4000
+  // Pocket Money Calcs: Dedicated Pocket Fund of 0 per person (total ¥0)
+  const totalPocketFundInput = 0 * initialMembers.length; // 8 * 0 = 0
   const pocketIn = expenses.filter(e => e.category === 'pocket_money_in').reduce((sum, item) => sum + item.amount, 0);
   const pocketOut = expenses.filter(e => e.category === 'pocket_money_out').reduce((sum, item) => sum + item.amount, 0);
   const pocketBalance = totalPocketFundInput + pocketIn - pocketOut;
@@ -315,15 +325,13 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                         const commonCost = accomShare + transShare;
                         const commonRefund = 2000 - commonCost;
                         
-                        // 2. Pocket Money Settle: Prepaid 500 target, actual cost is pocketOutShare - pocketInShare
+                        // 2. Pocket Money Settle: Prepaid 0 target, actual cost is pocketOutShare - pocketInShare
                         const pocketCost = pocketOutShare - pocketInShare;
-                        const pocketRefund = 500 - pocketCost;
+                        const pocketRefund = 0 - pocketCost;
                         
-                        // Combined Settlement: Settle the 2000 prepaid and collect the 500 pocket money deposit
-                        // If commonRefund > 0 (e.g. 365.14), and they owe 500 pocket money deposit:
-                        // balance = commonRefund - 500 = 365.14 - 500 = -134.86 (needs to supplement/补缴 134.86)
+                        // Combined Settlement: Settle the 2000 prepaid and subtract actual pocket cost
                         const actualCost = commonCost + pocketCost;
-                        const balance = commonRefund - 500;
+                        const balance = commonRefund - pocketCost;
                         
                         return (
                           <div key={i} className="bg-slate-50/50 rounded-2xl p-4 border border-slate-200 shadow-sm hover:shadow-md transition-all space-y-3">
@@ -333,7 +341,7 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                                 <span className="font-extrabold text-base text-slate-800">{m}</span>
                               </div>
                               <div className="text-right">
-                                <span className="text-[10px] text-slate-400 font-bold block">本期合併應收退 (公積金結算 抵扣 500 零用錢)</span>
+                                <span className="text-[10px] text-slate-400 font-bold block">本期合併應收退 (公積金結算 扣除 實際零用錢分攤)</span>
                                 {balance >= 0 ? (
                                   <span className="bg-emerald-50 text-emerald-700 text-xs px-2.5 py-0.5 rounded-full font-black inline-flex items-center gap-1 border border-emerald-100">
                                     應退還 ¥{balance.toFixed(2)} (NT${Math.round(balance * 4.15).toLocaleString()})
@@ -387,7 +395,7 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 block animate-pulse"></span>
                                     隨手零用金
                                   </span>
-                                  <span className="text-[9px] font-extrabold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded">本期補收 ¥500</span>
+                                  <span className="text-[9px] font-extrabold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">不另預收 (¥0)</span>
                                 </div>
                                 <div className="space-y-1 text-[11px] font-bold text-slate-500">
                                   <div className="flex justify-between">
@@ -404,9 +412,9 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                                     <span>¥{pocketCost.toFixed(2)}</span>
                                   </div>
                                   <div className="flex justify-between font-black text-[11px] pt-0.5 border-t border-slate-50">
-                                    <span>零用金結算結果 (應退剩額)</span>
+                                    <span>零用金結算結果</span>
                                     <span className={pocketRefund >= 0 ? "text-emerald-600" : "text-amber-600"}>
-                                      {pocketRefund >= 0 ? `餘額應退 ¥${pocketRefund.toFixed(2)}` : `超支應補 ¥${Math.abs(pocketRefund).toFixed(2)}`}
+                                      {pocketRefund >= 0 ? `餘額應退 ¥${pocketRefund.toFixed(2)}` : `實際應補 ¥${Math.abs(pocketRefund).toFixed(2)}`}
                                     </span>
                                   </div>
                                 </div>
@@ -423,7 +431,7 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                             </div>
                             
                             <div className="text-[10px] text-slate-400 italic font-medium px-1 text-center">
-                              說明：目前公積金預付 ¥2,000 已支付。本期補收隨行零用金 ¥500，扣除公積金應退 (¥{commonRefund.toFixed(2)}) 後，得出本期合併多退少補狀態。零用金支出 (¥{pocketCost.toFixed(2)}) 則從補收的 ¥500 中扣除，剩餘 ¥{pocketRefund.toFixed(2)} 留存於零用金專戶中後續結算、留存或退回。
+                              說明：目前公積金預付 ¥2,000 已支付。零用金不另預收 (補收 ¥0)。由公積金結算應退 (¥{commonRefund.toFixed(2)}) 扣除個人實際零用金支出 (¥{pocketCost.toFixed(2)}) 後，得出本次最終合併多退少補狀態。
                             </div>
                           </div>
                         );
@@ -460,16 +468,16 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                             const commonCost = accomShare + transShare;
                             const commonRefund = 2000 - commonCost;
                             const pocketCost = pocketOutShare - pocketInShare;
-                            const pocketRefund = 500 - pocketCost;
-                            // Settle 2000 prepaid and collect the 500 pocket money deposit:
-                            const totalRefund = commonRefund - 500; 
+                            const pocketRefund = 0 - pocketCost;
+                            // Settle 2000 prepaid and deduct actual pocket money cost:
+                            const totalRefund = commonRefund - pocketCost; 
                             
                             const totalStatusLabel = totalRefund >= 0 ? '本期合併應退還' : '本期合併應補繳';
                             
                             return `• ${m}:\n` +
                                    `  - 【公積金部分】預付 ¥2,000 (已付款) | 實際應攤 ¥${commonCost.toFixed(2)} | 結算：${commonRefund >= 0 ? '應退' : '應補'} ¥${Math.abs(commonRefund).toFixed(2)}\n` +
-                                   `  - 【零用金部分】本期應繳 ¥500        | 實際分攤 ¥${pocketCost.toFixed(2)} | 專戶餘額：¥${pocketRefund.toFixed(2)}\n` +
-                                   `  - 【本期合併多退少補】(公積金結算 抵扣 零用金應繳)：${totalStatusLabel} ¥${Math.abs(totalRefund).toFixed(2)} (折合約 NT$${Math.round(Math.abs(totalRefund) * 4.15).toLocaleString()})`;
+                                   `  - 【零用金部分】不另預收 (應收 ¥0)    | 實際分攤 ¥${pocketCost.toFixed(2)} | 應繳餘額：¥${Math.abs(pocketRefund).toFixed(2)}\n` +
+                                   `  - 【本期合併多退少補】(公積金應退 扣除 實際零用金應攤)：${totalStatusLabel} ¥${Math.abs(totalRefund).toFixed(2)} (折合約 NT$${Math.round(Math.abs(totalRefund) * 4.15).toLocaleString()})`;
                           }).join('\n\n');
 
                           const expenseItemLines = expenses
@@ -489,7 +497,7 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                             `------------------------------\n` +
                             `總支出金額: ¥${grandTotal.toFixed(2)} 人民幣 (約合 NT$${Math.round(grandTotal * 4.15).toLocaleString()})\n` +
                             `*(說明：因個人選擇房型單價相異，各人房費已按入住分配明細精確代入分攤)*\n\n` +
-                            `【每人已付與最終合併結算明細 (已付公積 ¥2,000，本期補收零用 ¥500，本次合併扣除分攤後多退少補)】\n` +
+                            `【每人已付與最終合併結算明細 (已付公積 ¥2,000，零用金 ¥0 不預收，本次合併扣除分攤後多退少補)】\n` +
                             `${memberLines}`;
                           navigator.clipboard.writeText(invoiceText);
                           alert('請款結算文字已成功複製到剪貼簿，可直接粘貼至 WhatsApp / LINE / 微信等社交軟體或 Excel！');
@@ -515,7 +523,7 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                       <div className="text-left md:text-right text-xs space-y-1 font-bold text-slate-500">
                         <div><span className="text-slate-400">約定匯率：</span>1 RMB = 4.15 台幣</div>
                         <div><span className="text-slate-400">已收資金：</span>公積金 ¥2,000 / 人 (預付已完成)</div>
-                        <div><span className="text-slate-400">本期補收：</span>隨行零用金 ¥500 / 人 (併入本次合併多退少補)</div>
+                        <div><span className="text-slate-400">本期預收：</span>隨行零用金 ¥0 / 人 (不另預收，實支實付)</div>
                         <div><span className="text-slate-400">結算日期：</span>2026年6月28日</div>
                       </div>
                     </div>
@@ -630,7 +638,7 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                               <th className="py-1.5 text-right px-1.5 bg-[#005d90]/5">實際應攤</th>
                               <th className="py-1.5 text-right px-1.5 border-r border-slate-200 bg-[#005d90]/10 text-[#005d90]">應退/補</th>
                               
-                              <th className="py-1.5 text-right px-1.5 bg-amber-50/60 text-amber-800">本期補收</th>
+                              <th className="py-1.5 text-right px-1.5 bg-amber-50/60 text-amber-800">不另預收</th>
                               <th className="py-1.5 text-right px-1.5 bg-emerald-800/5">實際應攤</th>
                               <th className="py-1.5 text-right px-1.5 border-r border-slate-200 bg-emerald-800/10 text-emerald-800">餘額退還</th>
                             </tr>
@@ -646,10 +654,10 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                               const commonRefund = 2000 - commonCost;
 
                               const pocketCost = pocketOutShare - pocketInShare;
-                              const pocketRefund = 500 - pocketCost;
+                              const pocketRefund = 0 - pocketCost;
 
-                              // Settle 2000 prepaid and collect the 500 pocket money deposit:
-                              const totalRefund = commonRefund - 500;
+                              // Settle 2000 prepaid and deduct actual pocket money cost:
+                              const totalRefund = commonRefund - pocketCost;
                               const totalRefundTwd = Math.round(totalRefund * 4.15);
 
                               return (
@@ -665,7 +673,7 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                                   </td>
                                   
                                   {/* 零用金 */}
-                                  <td className="py-2.5 px-1.5 text-amber-700 bg-amber-50/40 font-bold">¥500</td>
+                                  <td className="py-2.5 px-1.5 text-slate-400 bg-slate-50 font-bold">¥0</td>
                                   <td className="py-2.5 px-1.5 text-slate-800 font-bold bg-emerald-800/5">¥{pocketCost.toFixed(2)}</td>
                                   <td className={`py-2.5 px-1.5 font-black border-r border-slate-200 ${pocketRefund >= 0 ? 'text-emerald-700 bg-emerald-500/5' : 'text-amber-700 bg-amber-500/5'}`}>
                                     {pocketRefund >= 0 ? `退 ¥${pocketRefund.toFixed(2)}` : `補 ¥${Math.abs(pocketRefund).toFixed(2)}`}
@@ -871,7 +879,7 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                     {/* Fixed Bottom Action Bar */}
                     <div className="p-6 bg-white border-t border-outline-variant/10 flex flex-col gap-3">
                       <div className="flex gap-3">
-                        <button onClick={() => setIsEditing(null)} className="flex-1 py-4 bg-surface-container text-on-surface-variant rounded-2xl font-bold active:scale-95 transition-all text-sm uppercase tracking-widest">取消</button>
+                        <button onClick={handleCancel} className="flex-1 py-4 bg-surface-container text-on-surface-variant rounded-2xl font-bold active:scale-95 transition-all text-sm uppercase tracking-widest">取消</button>
                         <button onClick={handleSave} className="flex-[2] py-4 bg-primary text-white rounded-2xl font-bold shadow-lg shadow-primary/20 active:scale-95 transition-all text-sm uppercase tracking-widest">儲存並更新</button>
                       </div>
                       <button 
