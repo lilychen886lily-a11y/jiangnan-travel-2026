@@ -27,7 +27,76 @@ export const initialExpenses: ExpenseItem[] = [
   { id: '4', category: 'accommodation', title: '上海外灘豫園桔子水晶酒店', date: '06/28', amount: 2444.08, description: '大床房 3間(¥1,803.36) / 高級雙床房 1間(¥640.72) 共4間。(含早餐8份)', splitMembers: initialMembers },
   { id: '5', category: 'transportation', title: '全行程大包車費用 (上海－杭州－南京－烏鎮)', date: '06/25', amount: 2000.00, unitPrice: 100.00, quantity: 20, description: '實付包車款 (¥100 × 20計費單元) 全程管家隨行商務座大巴/用車', splitMembers: initialMembers },
   { id: '8', category: 'transportation', title: '高鐵：杭州東站 ➝ 上海南站 (G7542 一等座)', date: '06/28', amount: 1104.00, unitPrice: 138.00, quantity: 8, description: '全體8人高鐵票 | 14:05 杭州東站開 ➔ 15:11 抵達上海南站 | 座位與實名證件詳見高鐵詳情', splitMembers: initialMembers },
+  
+  // 零用金收入項目 (pocket_money_in)
+  { id: 'p-in-1', category: 'pocket_money_in', title: '零用金', date: '06/26', amount: 4000.00, unitPrice: 500.00, quantity: 8, description: '每人預交 ¥500 (共8人)', splitMembers: initialMembers },
+  
+  // 零用金支出項目 (pocket_money_out)
+  { id: 'p-out-1', category: 'pocket_money_out', title: '綠豆糕', date: '06/25', amount: 28.00, description: '無備註', splitMembers: initialMembers },
+  { id: 'p-out-2', category: 'pocket_money_out', title: '晚餐', date: '06/25', amount: 103.00, description: '無備註', splitMembers: initialMembers },
+  { id: 'p-out-3', category: 'pocket_money_out', title: '霸王茶姬', date: '06/25', amount: 118.00, description: '無備註', splitMembers: initialMembers },
+  { id: 'p-out-4', category: 'pocket_money_out', title: '小龍蝦', date: '06/25', amount: 395.00, description: '無備註', splitMembers: initialMembers },
+  { id: 'p-out-5', category: 'pocket_money_out', title: '全家花生茶點', date: '06/26', amount: 57.00, description: '無備註', splitMembers: initialMembers },
+  { id: 'p-out-6', category: 'pocket_money_out', title: '水果', date: '06/26', amount: 63.00, description: '無備註', splitMembers: initialMembers },
+  { id: 'p-out-7', category: 'pocket_money_out', title: '滷味', date: '06/26', amount: 72.00, description: '無備註', splitMembers: initialMembers },
+  { id: 'p-out-8', category: 'pocket_money_out', title: '烤肉', date: '06/26', amount: 170.00, description: '無備註', splitMembers: initialMembers },
+  { id: 'p-out-9', category: 'pocket_money_out', title: '古鎮到按摩車資', date: '06/26', amount: 9.00, description: '無備註', splitMembers: initialMembers },
+  { id: 'p-out-10', category: 'pocket_money_out', title: '按摩回古鎮車資', date: '06/26', amount: 3.00, description: '無備註', splitMembers: initialMembers },
+  { id: 'p-out-11', category: 'pocket_money_out', title: '豬肉干', date: '06/26', amount: 66.00, description: '無備註', splitMembers: initialMembers },
+  { id: 'p-out-12', category: 'pocket_money_out', title: '綠豆糕', date: '06/26', amount: 30.00, description: '無備註', splitMembers: initialMembers },
+  { id: 'p-out-13', category: 'pocket_money_out', title: '聖園軒按摩', date: '06/26', amount: 1112.00, unitPrice: 139.00, quantity: 8, description: '¥139 × 8人 | 聖園軒足浴按摩', splitMembers: initialMembers },
+  { id: 'p-out-14', category: 'pocket_money_out', title: '烏鎮到南潯車費', date: '06/26', amount: 160.00, unitPrice: 80.00, quantity: 2, description: '¥80 × 2人 | 烏鎮到南潯包車車費', splitMembers: initialMembers },
+  { id: 'p-out-15', category: 'pocket_money_out', title: '栗子餅', date: '06/26', amount: 10.00, unitPrice: 2.00, quantity: 5, description: '¥2 × 5個 | 栗子餅點心', splitMembers: initialMembers },
+  { id: 'p-out-16', category: 'pocket_money_out', title: '楊莓干', date: '06/26', amount: 11.00, description: '無備註', splitMembers: initialMembers },
+  { id: 'p-out-17', category: 'pocket_money_out', title: '梅干菜餅', date: '06/26', amount: 5.00, description: '無備註', splitMembers: initialMembers },
+  { id: 'p-out-18', category: 'pocket_money_out', title: '烏鎮船', date: '06/26', amount: 500.00, description: '無備註', splitMembers: initialMembers },
+  { id: 'p-out-19', category: 'pocket_money_out', title: '蘿蔔絲餅', date: '06/26', amount: 12.00, unitPrice: 3.00, quantity: 4, description: '¥3 × 4個 | 蘿蔔絲餅點心', splitMembers: initialMembers },
 ];
+
+export function parseDateToSortValue(dateStr: string): number {
+  if (!dateStr) return 0;
+  const cleanStr = dateStr.replace(/-/g, '/').trim();
+  const parts = cleanStr.split('/');
+  
+  if (parts.length === 3) {
+    let year = 2026;
+    let month = 1;
+    let day = 1;
+    if (parts[0].length === 4) {
+      year = parseInt(parts[0], 10) || 2026;
+      month = parseInt(parts[1], 10) || 1;
+      day = parseInt(parts[2], 10) || 1;
+    } else if (parts[2].length === 4) {
+      year = parseInt(parts[2], 10) || 2026;
+      month = parseInt(parts[0], 10) || 1;
+      day = parseInt(parts[1], 10) || 1;
+    } else {
+      month = parseInt(parts[0], 10) || 1;
+      day = parseInt(parts[1], 10) || 1;
+      year = (parseInt(parts[2], 10) || 26) + 2000;
+    }
+    return new Date(year, month - 1, day).getTime();
+  } else if (parts.length === 2) {
+    const month = parseInt(parts[0], 10) || 1;
+    const day = parseInt(parts[1], 10) || 1;
+    return new Date(2026, month - 1, day).getTime();
+  }
+  
+  const d = new Date(dateStr);
+  if (!isNaN(d.getTime())) {
+    return d.getTime();
+  }
+  
+  return 0;
+}
+
+export function sortExpensesByDate(list: ExpenseItem[]): ExpenseItem[] {
+  return [...list].sort((a, b) => {
+    const valA = parseDateToSortValue(a.date);
+    const valB = parseDateToSortValue(b.date);
+    return valA - valB;
+  });
+}
 
 interface BudgetModalProps {
   isOpen: boolean;
@@ -325,13 +394,12 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                         const commonCost = accomShare + transShare;
                         const commonRefund = 2000 - commonCost;
                         
-                        // 2. Pocket Money Settle: Prepaid 0 target, actual cost is pocketOutShare - pocketInShare
-                        const pocketCost = pocketOutShare - pocketInShare;
-                        const pocketRefund = 0 - pocketCost;
+                        // 2. Pocket Money Settle: Prepaid pocketInShare, actual cost is pocketOutShare
+                        const pocketRefund = pocketInShare - pocketOutShare;
                         
-                        // Combined Settlement: Settle the 2000 prepaid and subtract actual pocket cost
-                        const actualCost = commonCost + pocketCost;
-                        const balance = commonRefund - pocketCost;
+                        // Combined Settlement: Settle the 2000 prepaid and pocket money refund
+                        const actualCost = commonCost + pocketOutShare;
+                        const balance = commonRefund + pocketRefund;
                         
                         return (
                           <div key={i} className="bg-slate-50/50 rounded-2xl p-4 border border-slate-200 shadow-sm hover:shadow-md transition-all space-y-3">
@@ -341,7 +409,7 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                                 <span className="font-extrabold text-base text-slate-800">{m}</span>
                               </div>
                               <div className="text-right">
-                                <span className="text-[10px] text-slate-400 font-bold block">本期合併應收退 (公積金結算 扣除 實際零用錢分攤)</span>
+                                <span className="text-[10px] text-slate-400 font-bold block">本期合併應收退 (公積金與零用金合併結算)</span>
                                 {balance >= 0 ? (
                                   <span className="bg-emerald-50 text-emerald-700 text-xs px-2.5 py-0.5 rounded-full font-black inline-flex items-center gap-1 border border-emerald-100">
                                     應退還 ¥{balance.toFixed(2)} (NT${Math.round(balance * 4.15).toLocaleString()})
@@ -395,22 +463,20 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 block animate-pulse"></span>
                                     隨手零用金
                                   </span>
-                                  <span className="text-[9px] font-extrabold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">不另預收 (¥0)</span>
+                                  <span className="text-[9px] font-extrabold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">
+                                    {pocketInShare > 0 ? `已交預收 ¥${pocketInShare.toFixed(2)}` : '不另預收 (¥0)'}
+                                  </span>
                                 </div>
                                 <div className="space-y-1 text-[11px] font-bold text-slate-500">
                                   <div className="flex justify-between">
-                                    <span>零用金支出均攤</span>
-                                    <span className="text-slate-700">¥{pocketOutShare.toFixed(2)}</span>
+                                    <span>已預交零用金</span>
+                                    <span className="text-emerald-600">¥{pocketInShare.toFixed(2)}</span>
                                   </div>
                                   <div className="flex justify-between">
-                                    <span>共同基金餘額返還</span>
-                                    <span className="text-green-600">- ¥{pocketInShare.toFixed(2)}</span>
+                                    <span>實際零用支出均攤</span>
+                                    <span className="text-slate-700">¥{pocketOutShare.toFixed(2)}</span>
                                   </div>
                                   <div className="h-px bg-slate-100 my-1" />
-                                  <div className="flex justify-between text-slate-800 font-extrabold">
-                                    <span>零用費用總攤</span>
-                                    <span>¥{pocketCost.toFixed(2)}</span>
-                                  </div>
                                   <div className="flex justify-between font-black text-[11px] pt-0.5 border-t border-slate-50">
                                     <span>零用金結算結果</span>
                                     <span className={pocketRefund >= 0 ? "text-emerald-600" : "text-amber-600"}>
@@ -431,7 +497,7 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                             </div>
                             
                             <div className="text-[10px] text-slate-400 italic font-medium px-1 text-center">
-                              說明：目前公積金預付 ¥2,000 已支付。零用金不另預收 (補收 ¥0)。由公積金結算應退 (¥{commonRefund.toFixed(2)}) 扣除個人實際零用金支出 (¥{pocketCost.toFixed(2)}) 後，得出本次最終合併多退少補狀態。
+                              說明：目前公積金預付 ¥2,000 已支付。零用金已付 ¥{pocketInShare.toFixed(2)}。由公積金結算應退 (¥{commonRefund.toFixed(2)}) 加上零用金結算 {(pocketRefund >= 0 ? '應退' : '應補')} (¥{Math.abs(pocketRefund).toFixed(2)}) 後，得出本次最終合併多退少補狀態。
                             </div>
                           </div>
                         );
@@ -459,6 +525,7 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                       </button>
                       <button 
                         onClick={() => {
+                          const sortedExpenses = sortExpensesByDate(expenses);
                           const memberLines = initialMembers.map(m => {
                             const accomShare = getMemberAccommodationShare(m);
                             const transShare = expenses.filter(e => e.category === 'transportation').reduce((sum, item) => sum + ((item.splitMembers || initialMembers).includes(m) ? item.amount / (item.splitMembers?.length || initialMembers.length) : 0), 0);
@@ -467,38 +534,47 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                             
                             const commonCost = accomShare + transShare;
                             const commonRefund = 2000 - commonCost;
-                            const pocketCost = pocketOutShare - pocketInShare;
-                            const pocketRefund = 0 - pocketCost;
-                            // Settle 2000 prepaid and deduct actual pocket money cost:
-                            const totalRefund = commonRefund - pocketCost; 
+                            const pocketRefund = pocketInShare - pocketOutShare;
+                            // Settle 2000 prepaid and pocket money refund:
+                            const totalRefund = commonRefund + pocketRefund; 
                             
                             const totalStatusLabel = totalRefund >= 0 ? '本期合併應退還' : '本期合併應補繳';
                             
                             return `• ${m}:\n` +
                                    `  - 【公積金部分】預付 ¥2,000 (已付款) | 實際應攤 ¥${commonCost.toFixed(2)} | 結算：${commonRefund >= 0 ? '應退' : '應補'} ¥${Math.abs(commonRefund).toFixed(2)}\n` +
-                                   `  - 【零用金部分】不另預收 (應收 ¥0)    | 實際分攤 ¥${pocketCost.toFixed(2)} | 應繳餘額：¥${Math.abs(pocketRefund).toFixed(2)}\n` +
-                                   `  - 【本期合併多退少補】(公積金應退 扣除 實際零用金應攤)：${totalStatusLabel} ¥${Math.abs(totalRefund).toFixed(2)} (折合約 NT$${Math.round(Math.abs(totalRefund) * 4.15).toLocaleString()})`;
+                                   `  - 【零用金部分】已交預收 ¥${pocketInShare.toFixed(2)} | 實際分攤 ¥${pocketOutShare.toFixed(2)} | 結算：${pocketRefund >= 0 ? '應退' : '應補'} ¥${Math.abs(pocketRefund).toFixed(2)}\n` +
+                                   `  - 【本期合併多退少補】：${totalStatusLabel} ¥${Math.abs(totalRefund).toFixed(2)} (折合約 NT$${Math.round(Math.abs(totalRefund) * 4.15).toLocaleString()})`;
                           }).join('\n\n');
 
-                          const expenseItemLines = expenses
+                          const expenseItemLines = sortedExpenses
                             .filter(e => e.category === 'accommodation' || e.category === 'transportation')
                             .map((e, idx) => {
                               const qtyPart = e.quantity ? ` [${e.quantity}${e.category === 'accommodation' ? '間' : '套'}]` : ' [1件]';
                               const descPart = e.description ? ` (${e.description})` : '';
-                              return `${idx + 1}. ${e.title}${qtyPart}: ¥${e.amount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} (NT$${Math.round(e.amount * 4.15).toLocaleString()})${descPart}`;
+                              return `${idx + 1}. [${e.date}] ${e.title}${qtyPart}: ¥${e.amount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} (NT$${Math.round(e.amount * 4.15).toLocaleString()})${descPart}`;
+                            })
+                            .join('\n');
+
+                          const pocketItemLines = sortedExpenses
+                            .filter(e => e.category === 'pocket_money_in' || e.category === 'pocket_money_out')
+                            .map((e, idx) => {
+                              const typePart = e.category === 'pocket_money_in' ? '【預收】' : '【支出】';
+                              const descPart = e.description ? ` (${e.description})` : '';
+                              return `${idx + 1}. [${e.date}] ${typePart}${e.title}: ¥${e.amount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} (NT$${Math.round(e.amount * 4.15).toLocaleString()})${descPart}`;
                             })
                             .join('\n');
 
                           const invoiceText = `【江南華東五日遊】8人請款與分帳結算單 (公積/零用獨立結算)\n` +
                             `結算時間: 2026年6月28日\n` +
                             `約定匯率: 1 RMB = 4.15 TWD\n\n` +
-                            `【款項清單】\n` +
+                            `【一、大宗代收代付項目清單】\n` +
                             `${expenseItemLines}\n` +
-                            `------------------------------\n` +
-                            `總支出金額: ¥${grandTotal.toFixed(2)} 人民幣 (約合 NT$${Math.round(grandTotal * 4.15).toLocaleString()})\n` +
-                            `*(說明：因個人選擇房型單價相異，各人房費已按入住分配明細精確代入分攤)*\n\n` +
-                            `【每人已付與最終合併結算明細 (已付公積 ¥2,000，零用金 ¥0 不預收，本次合併扣除分攤後多退少補)】\n` +
-                            `${memberLines}`;
+                            `大宗總支出: ¥${grandTotal.toFixed(2)} 人民幣 (約合 NT$${Math.round(grandTotal * 4.15).toLocaleString()})\n\n` +
+                            `【二、隨手零用金明細清單】\n` +
+                            `${pocketItemLines}\n` +
+                            `零用金總預收: ¥${pocketIn.toFixed(2)} | 零用金總支出: ¥${pocketOut.toFixed(2)} | 零用金結餘剩餘: ¥${pocketBalance.toFixed(2)}\n\n` +
+                            `【三、每人已付與最終合併結算明細 (已付公積 ¥2,000，已預收零用金隨各成員明細)】\n` +
+                            `${memberLines}`.trim();
                           navigator.clipboard.writeText(invoiceText);
                           alert('請款結算文字已成功複製到剪貼簿，可直接粘貼至 WhatsApp / LINE / 微信等社交軟體或 Excel！');
                         }}
@@ -522,8 +598,8 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                       </div>
                       <div className="text-left md:text-right text-xs space-y-1 font-bold text-slate-500">
                         <div><span className="text-slate-400">約定匯率：</span>1 RMB = 4.15 台幣</div>
-                        <div><span className="text-slate-400">已收資金：</span>公積金 ¥2,000 / 人 (預付已完成)</div>
-                        <div><span className="text-slate-400">本期預收：</span>隨行零用金 ¥0 / 人 (不另預收，實支實付)</div>
+                        <div><span className="text-slate-400">已收大宗：</span>公積金 ¥2,000 / 人 (預付已完成)</div>
+                        <div><span className="text-slate-400">已收零用：</span>隨手零用金 ¥{(pocketIn / initialMembers.length).toLocaleString(undefined, {maximumFractionDigits: 2})} / 人 (預收已完成)</div>
                         <div><span className="text-slate-400">結算日期：</span>2026年6月28日</div>
                       </div>
                     </div>
@@ -545,7 +621,7 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                             </tr>
                           </thead>
                           <tbody className="divide-y divide-slate-100">
-                            {expenses.filter(e => e.category === 'accommodation' || e.category === 'transportation').map((exp) => (
+                            {sortExpensesByDate(expenses.filter(e => e.category === 'accommodation' || e.category === 'transportation')).map((exp) => (
                               <tr key={exp.id}>
                                 <td className="py-3 font-semibold text-slate-400">{exp.date}</td>
                                 <td className="py-3 text-left">
@@ -572,10 +648,63 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                       </div>
                     </div>
 
+                    {/* Table 1B: Pocket Money details */}
+                    <div className="space-y-3">
+                      <div className="text-sm font-black text-slate-900 flex items-center gap-1.5 border-l-4 border-slate-900 pl-2">
+                        <span>二、隨手零用金項目明細 (預收與支出)</span>
+                      </div>
+                      <div className="overflow-x-auto font-bold">
+                        <table className="w-full text-left text-xs border-collapse">
+                          <thead>
+                            <tr className="border-b border-slate-300 text-[10px] text-slate-400 font-extrabold text-left">
+                              <th className="py-2.5">日期</th>
+                              <th className="py-2.5">項目名稱</th>
+                              <th className="py-2.5">收支類型</th>
+                              <th className="py-2.5 text-right font-black">金額 (RMB)</th>
+                              <th className="py-2.5 text-right font-black">折合台幣 (TWD)</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-100">
+                            {sortExpensesByDate(expenses.filter(e => e.category === 'pocket_money_in' || e.category === 'pocket_money_out')).map((exp) => (
+                              <tr key={exp.id} className={exp.category === 'pocket_money_in' ? 'bg-emerald-500/5' : ''}>
+                                <td className="py-2.5 font-semibold text-slate-400">{exp.date}</td>
+                                <td className="py-2.5 text-left">
+                                  <div className="font-extrabold text-slate-800">{exp.title}</div>
+                                  <div className="text-[10px] text-slate-400 font-bold">{exp.description}</div>
+                                </td>
+                                <td className="py-2.5 text-left">
+                                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-black ${exp.category === 'pocket_money_in' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}`}>
+                                    {exp.category === 'pocket_money_in' ? '收入(預收)' : '支出(實支)'}
+                                  </span>
+                                </td>
+                                <td className="py-2.5 text-right font-black text-slate-800">¥{exp.amount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                                <td className="py-2.5 text-right font-black text-[#005d90]">NT${Math.round(exp.amount * 4.15).toLocaleString()}</td>
+                              </tr>
+                            ))}
+                            <tr className="border-t-2 border-slate-900 bg-slate-50/50">
+                              <td colSpan={3} className="py-2.5 font-black text-slate-800 text-xs">零用金總預收 (Total In)</td>
+                              <td className="py-2.5 text-right font-black text-emerald-700 text-xs">¥{pocketIn.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                              <td className="py-2.5 text-right font-black text-[#005d90] text-xs">NT${Math.round(pocketIn * 4.15).toLocaleString()}</td>
+                            </tr>
+                            <tr className="bg-slate-50/50">
+                              <td colSpan={3} className="py-2.5 font-black text-slate-800 text-xs">零用金總支出 (Total Out)</td>
+                              <td className="py-2.5 text-right font-black text-amber-700 text-xs">¥{pocketOut.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                              <td className="py-2.5 text-right font-black text-[#005d90] text-xs">NT${Math.round(pocketOut * 4.15).toLocaleString()}</td>
+                            </tr>
+                            <tr className="bg-primary/5 text-xs">
+                              <td colSpan={3} className="py-2.5 font-black text-primary">零用金結餘剩餘 (Balance)</td>
+                              <td className="py-2.5 text-right font-black text-primary">¥{pocketBalance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                              <td className="py-2.5 text-right font-black text-[#005d90]">NT${Math.round(pocketBalance * 4.15).toLocaleString()}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
                     {/* Table 2: Room Allocations */}
                     <div className="space-y-3">
                       <div className="text-sm font-black text-slate-900 flex items-center gap-1.5 border-l-4 border-slate-900 pl-2">
-                        <span>二、登記入住與房間分配一覽表 (誰住哪一間)</span>
+                        <span>三、登記入住與房間分配一覽表 (誰住哪一間)</span>
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-medium">
                         <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
@@ -617,10 +746,10 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                       </div>
                     </div>
 
-                    {/* Table 3: Settlement Splits */}
+                    {/* Table 4: Settlement Splits */}
                     <div className="space-y-3">
                       <div className="text-sm font-black text-slate-900 flex items-center gap-1.5 border-l-4 border-slate-900 pl-2">
-                        <span>三、全團8位成員應攤/分款結算狀態一覽表 (公積與零用獨立計算)</span>
+                        <span>四、全團8位成員應攤/分款結算狀態一覽表 (公積與零用獨立計算)</span>
                       </div>
                       <div className="overflow-x-auto">
                         <table className="w-full text-left text-[11px] border-collapse font-extrabold text-right border border-slate-200">
@@ -638,9 +767,9 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                               <th className="py-1.5 text-right px-1.5 bg-[#005d90]/5">實際應攤</th>
                               <th className="py-1.5 text-right px-1.5 border-r border-slate-200 bg-[#005d90]/10 text-[#005d90]">應退/補</th>
                               
-                              <th className="py-1.5 text-right px-1.5 bg-amber-50/60 text-amber-800">不另預收</th>
-                              <th className="py-1.5 text-right px-1.5 bg-emerald-800/5">實際應攤</th>
-                              <th className="py-1.5 text-right px-1.5 border-r border-slate-200 bg-emerald-800/10 text-emerald-800">餘額退還</th>
+                              <th className="py-1.5 text-right px-1.5 bg-emerald-800/5 text-emerald-800">每人已付</th>
+                              <th className="py-1.5 text-right px-1.5 bg-emerald-800/5 text-emerald-800">實際應攤</th>
+                              <th className="py-1.5 text-right px-1.5 border-r border-slate-200 bg-emerald-800/10 text-emerald-800">應退/補</th>
                             </tr>
                           </thead>
                           <tbody className="divide-y divide-slate-200">
@@ -653,11 +782,10 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                               const commonCost = accomShare + transShare;
                               const commonRefund = 2000 - commonCost;
 
-                              const pocketCost = pocketOutShare - pocketInShare;
-                              const pocketRefund = 0 - pocketCost;
+                              const pocketRefund = pocketInShare - pocketOutShare;
 
                               // Settle 2000 prepaid and deduct actual pocket money cost:
-                              const totalRefund = commonRefund - pocketCost;
+                              const totalRefund = commonRefund + pocketRefund;
                               const totalRefundTwd = Math.round(totalRefund * 4.15);
 
                               return (
@@ -673,8 +801,8 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                                   </td>
                                   
                                   {/* 零用金 */}
-                                  <td className="py-2.5 px-1.5 text-slate-400 bg-slate-50 font-bold">¥0</td>
-                                  <td className="py-2.5 px-1.5 text-slate-800 font-bold bg-emerald-800/5">¥{pocketCost.toFixed(2)}</td>
+                                  <td className="py-2.5 px-1.5 text-slate-400 font-bold bg-emerald-500/5">¥{pocketInShare.toFixed(2)}</td>
+                                  <td className="py-2.5 px-1.5 text-slate-800 font-bold bg-emerald-800/5">¥{pocketOutShare.toFixed(2)}</td>
                                   <td className={`py-2.5 px-1.5 font-black border-r border-slate-200 ${pocketRefund >= 0 ? 'text-emerald-700 bg-emerald-500/5' : 'text-amber-700 bg-amber-500/5'}`}>
                                     {pocketRefund >= 0 ? `退 ¥${pocketRefund.toFixed(2)}` : `補 ¥${Math.abs(pocketRefund).toFixed(2)}`}
                                   </td>
@@ -978,7 +1106,7 @@ function ExpenseSection({ title, icon, items, color, onEdit, onDelete, onAdd, is
         </button>
       </div>
       <div className="space-y-3">
-        {items.map((exp: any) => (
+        {sortExpensesByDate(items).map((exp: any) => (
           <div 
             key={exp.id} 
             onClick={() => onEdit(exp.id)}

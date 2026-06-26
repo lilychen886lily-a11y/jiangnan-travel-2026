@@ -34,7 +34,7 @@ export default function App() {
   // Elevated state from BudgetModal for unified financial reactive calculations
   const [expenses, setExpenses] = useState<ExpenseItem[]>(() => {
     try {
-      const saved = localStorage.getItem('trip_expenses_v5');
+      const saved = localStorage.getItem('trip_expenses_v6');
       if (saved) {
         return JSON.parse(saved);
       }
@@ -46,7 +46,7 @@ export default function App() {
 
   useEffect(() => {
     try {
-      localStorage.setItem('trip_expenses_v5', JSON.stringify(expenses));
+      localStorage.setItem('trip_expenses_v6', JSON.stringify(expenses));
     } catch (e) {
       console.warn('Failed to write to LocalStorage:', e);
     }
