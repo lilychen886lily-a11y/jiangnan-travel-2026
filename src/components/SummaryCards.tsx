@@ -1,32 +1,24 @@
-import { Sun, PiggyBank } from 'lucide-react';
+import { PiggyBank, Wallet } from 'lucide-react';
 import { motion } from 'motion/react';
 
 interface SummaryCardsProps {
-  remainingCommonFund: number;
+  remainingPocketMoney: number;
 }
 
-export default function SummaryCards({ remainingCommonFund }: SummaryCardsProps) {
+export default function SummaryCards({ remainingPocketMoney }: SummaryCardsProps) {
   const cards = [
     {
-      label: '今日天氣',
-      value: '28°C',
-      sub: '江南 晴朗',
-      icon: Sun,
-      color: 'text-secondary',
-      fill: true
-    },
-    {
-      label: '公積金剩餘',
-      value: `¥${Math.round(remainingCommonFund).toLocaleString()}`,
-      sub: '人民幣 (CNY)',
-      icon: PiggyBank,
-      color: 'text-secondary',
-      link: '#'
+      label: '零用金剩餘',
+      value: `¥${Math.round(remainingPocketMoney).toLocaleString()}`,
+      sub: '隨手團體零用金結餘',
+      icon: Wallet,
+      color: 'text-emerald-600',
+      fill: false
     }
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-4 mb-6">
+    <div className="grid grid-cols-1 gap-4 mb-6">
       {cards.map((card, index) => (
         <motion.div
           key={index}
@@ -35,15 +27,9 @@ export default function SummaryCards({ remainingCommonFund }: SummaryCardsProps)
           transition={{ delay: index * 0.1 }}
           className="bg-surface-container-lowest p-5 rounded-2xl flex flex-col justify-between border border-outline-variant/10 shadow-sm"
         >
-          {card.link ? (
-            <a href={card.link} target="_blank" rel="noopener noreferrer" className="h-full flex flex-col justify-between">
-              <CardContent card={card} />
-            </a>
-          ) : (
-            <div className="h-full flex flex-col justify-between">
-              <CardContent card={card} />
-            </div>
-          )}
+          <div className="h-full flex flex-col justify-between">
+            <CardContent card={card} />
+          </div>
         </motion.div>
       ))}
     </div>

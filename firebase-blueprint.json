@@ -1,0 +1,55 @@
+{
+  "entities": {
+    "ExpenseItem": {
+      "title": "ExpenseItem",
+      "description": "An item representing a travel expense or pocket money entry",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier of the expense item"
+        },
+        "category": {
+          "type": "string",
+          "enum": ["accommodation", "transportation", "pocket_money_in", "pocket_money_out"],
+          "description": "The financial category of this item"
+        },
+        "title": {
+          "type": "string",
+          "description": "The title or name of the transaction"
+        },
+        "date": {
+          "type": "string",
+          "description": "Date of the transaction (format like MM/DD or YYYY-MM-DD)"
+        },
+        "amount": {
+          "type": "number",
+          "description": "Total amount in RMB"
+        },
+        "unitPrice": {
+          "type": "number",
+          "description": "Optional unit price in RMB"
+        },
+        "quantity": {
+          "type": "number",
+          "description": "Optional quantity of items"
+        },
+        "description": {
+          "type": "string",
+          "description": "Optional memo or notes"
+        },
+        "splitMembers": {
+          "type": "array",
+          "description": "List of member names to split this cost with"
+        }
+      },
+      "required": ["id", "category", "title", "date", "amount"]
+    }
+  },
+  "firestore": {
+    "/expenses/{expenseId}": {
+      "schema": "ExpenseItem",
+      "description": "Shared travel expenses and pocket money entries for the group"
+    }
+  }
+}

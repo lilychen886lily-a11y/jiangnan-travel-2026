@@ -1,0 +1,14 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+    
+    // Allow collaborative read and write access to the shared travel expenses
+    match /expenses/{expenseId} {
+      allow read, write: if true;
+    }
+  }
+}

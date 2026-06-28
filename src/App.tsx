@@ -10,7 +10,7 @@
 
 import { Calendar } from 'lucide-react';
 import { motion } from 'motion/react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Header from './components/Header';
 import SummaryCards from './components/SummaryCards';
 import NavGrid from './components/NavGrid';
@@ -23,6 +23,9 @@ import FlightModal from './components/FlightModal';
 import TransportModal from './components/TransportModal';
 import OtherModal from './components/OtherModal';
 
+import { onSnapshot, setDoc, doc, deleteDoc, writeBatch } from 'firebase/firestore';
+import { db, expensesCollection } from './lib/firebase';
+
 export default function App() {
   const [isItineraryOpen, setIsItineraryOpen] = useState(false);
   const [isBudgetOpen, setIsBudgetOpen] = useState(false);
@@ -32,7 +35,7 @@ export default function App() {
   const [isOtherOpen, setIsOtherOpen] = useState(false);
 
   // Elevated state from BudgetModal for unified financial reactive calculations
-  const [expenses, setExpenses] = useState<ExpenseItem[]>(() => {
+  const [expenses, setExpensesState] = useState<ExpenseItem[]>(() => {
     try {
       const saved = localStorage.getItem('trip_expenses_v6');
       if (saved) {
@@ -44,19 +47,144 @@ export default function App() {
     return initialExpenses;
   });
 
+  const hasSyncedInitial = useRef(false);
+
+  // Real-time listener for Firestore database updates with automatic local-cloud merging on startup
   useEffect(() => {
-    try {
-      localStorage.setItem('trip_expenses_v6', JSON.stringify(expenses));
-    } catch (e) {
-      console.warn('Failed to write to LocalStorage:', e);
-    }
-  }, [expenses]);
+    const unsubscribe = onSnapshot(expensesCollection, async (snapshot) => {
+      const fbExpenses: ExpenseItem[] = [];
+      snapshot.forEach((d) => {
+        fbExpenses.push(d.data() as ExpenseItem);
+      });
+
+      if (fbExpenses.length === 0 && snapshot.metadata.fromCache === false) {
+        // Firestore is completely empty. Let's seed with current local state (preserving entered pocket money)
+        console.log('Firestore is empty. Seeding with current local state...');
+        const batch = writeBatch(db);
+        
+        let localData = initialExpenses;
+        try {
+          const saved = localStorage.getItem('trip_expenses_v6');
+          if (saved) {
+            localData = JSON.parse(saved);
+          }
+        } catch (e) {
+          console.warn('Failed to parse localStorage on empty seed:', e);
+        }
+
+        localData.forEach((item) => {
+          const docRef = doc(db, 'expenses', item.id);
+          batch.set(docRef, item);
+        });
+        
+        try {
+          await batch.commit();
+          console.log('Seeding with local state completed successfully.');
+        } catch (err) {
+          console.error('Seeding failed:', err);
+        }
+      } else if (fbExpenses.length > 0) {
+        if (!hasSyncedInitial.current) {
+          hasSyncedInitial.current = true;
+          
+          // First sync: merge any local-only entries (e.g. pocket money entered before Firebase or offline)
+          let localData: ExpenseItem[] = [];
+          try {
+            const saved = localStorage.getItem('trip_expenses_v6');
+            if (saved) {
+              localData = JSON.parse(saved);
+            }
+          } catch (e) {
+            console.warn('Failed to parse localStorage:', e);
+          }
+
+          // Find items in localData that are NOT in fbExpenses
+          const localOnlyItems = localData.filter(
+            (localItem) => !fbExpenses.some((fbItem) => fbItem.id === localItem.id)
+          );
+
+          if (localOnlyItems.length > 0) {
+            console.log('Found local-only items. Syncing up to Firestore:', localOnlyItems);
+            try {
+              const batch = writeBatch(db);
+              localOnlyItems.forEach((item) => {
+                const docRef = doc(db, 'expenses', item.id);
+                batch.set(docRef, item);
+              });
+              await batch.commit();
+              console.log('Local-only items synced to Firestore successfully.');
+            } catch (err) {
+              console.error('Failed to sync local-only items to Firestore:', err);
+            }
+            return; // Exit, the next snapshot triggered by the batch.commit will contain everything
+          }
+        }
+
+        // Standard update: update UI state and keep localStorage in sync with cloud
+        setExpensesState(fbExpenses);
+        try {
+          localStorage.setItem('trip_expenses_v6', JSON.stringify(fbExpenses));
+        } catch (e) {
+          console.warn('Failed to write to LocalStorage:', e);
+        }
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // Synchronizes modifications to Firestore safely using functional state updates (avoids stale closures)
+  const setExpenses = (valueOrFunc: ExpenseItem[] | ((prev: ExpenseItem[]) => ExpenseItem[])) => {
+    setExpensesState((prevExpenses) => {
+      const nextExpenses = typeof valueOrFunc === 'function' 
+        ? valueOrFunc(prevExpenses) 
+        : valueOrFunc;
+
+      // Sync changes to firestore (compare differences and push/delete)
+      const syncToFirestore = async () => {
+        try {
+          // Find deleted items
+          const deleted = prevExpenses.filter(e => !nextExpenses.some(ne => ne.id === e.id));
+          for (const item of deleted) {
+            await deleteDoc(doc(db, 'expenses', item.id));
+          }
+
+          // Find added or modified items
+          for (const item of nextExpenses) {
+            const existingItem = prevExpenses.find(e => e.id === item.id);
+            if (!existingItem || JSON.stringify(existingItem) !== JSON.stringify(item)) {
+              await setDoc(doc(db, 'expenses', item.id), item);
+            }
+          }
+        } catch (err) {
+          console.error('Failed to sync changes to Firestore:', err);
+        }
+      };
+
+      syncToFirestore();
+
+      // Write directly to local storage to ensure offline safety and immediate updates
+      try {
+        localStorage.setItem('trip_expenses_v6', JSON.stringify(nextExpenses));
+      } catch (e) {
+        console.warn('Failed to write to LocalStorage:', e);
+      }
+
+      return nextExpenses;
+    });
+  };
+
 
   const totalAccommodation = expenses.filter(e => e.category === 'accommodation').reduce((sum, item) => sum + item.amount, 0);
   const totalTransportation = expenses.filter(e => e.category === 'transportation').reduce((sum, item) => sum + item.amount, 0);
   
   // Dynamic Common Fund (2000 per person, 8 members total = 16000)
   const remainingCommonFund = (2000 * initialMembers.length) - (totalAccommodation + totalTransportation);
+
+  // Dynamic Pocket Money Fund
+  const pocketIn = expenses.filter(e => e.category === 'pocket_money_in').reduce((sum, item) => sum + item.amount, 0);
+  const pocketOut = expenses.filter(e => e.category === 'pocket_money_out').reduce((sum, item) => sum + item.amount, 0);
+  const remainingPocketMoney = pocketIn - pocketOut;
 
   const activeTab = isItineraryOpen
     ? 'itinerary'
@@ -112,7 +240,7 @@ export default function App() {
           </motion.div>
         </section>
 
-        <SummaryCards remainingCommonFund={remainingCommonFund} />
+        <SummaryCards remainingPocketMoney={remainingPocketMoney} />
         
         <NavGrid 
           onOpenTransport={() => setIsTransportOpen(true)}
