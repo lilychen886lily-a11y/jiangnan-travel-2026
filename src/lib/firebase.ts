@@ -4,7 +4,7 @@ import firebaseConfig from '../../firebase-applet-config.json';
 
 // Initialize Firebase using the configuration from the workspace config file
 const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app);
+export const db = getFirestore(app, (firebaseConfig as any).firestoreDatabaseId || undefined);
 
 // Helper reference to the shared expenses collection
 export const expensesCollection = collection(db, 'expenses');
