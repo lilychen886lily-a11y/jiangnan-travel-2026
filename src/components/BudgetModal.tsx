@@ -35,7 +35,7 @@ export const initialExpenses: ExpenseItem[] = [
   { id: 'p-out-1', category: 'pocket_money_out', title: '綠豆糕', date: '06/25', amount: 28.00, description: '無備註', splitMembers: initialMembers },
   { id: 'p-out-2', category: 'pocket_money_out', title: '晚餐', date: '06/25', amount: 103.00, description: '無備註', splitMembers: initialMembers },
   { id: 'p-out-3', category: 'pocket_money_out', title: '霸王茶姬', date: '06/25', amount: 118.00, description: '無備註', splitMembers: initialMembers },
-  { id: 'p-out-4', category: 'pocket_money_out', title: '小龍蝦', date: '06/25', amount: 395.00, description: '無備註', splitMembers: initialMembers },
+  { id: 'p-out-4', category: 'pocket_money_out', title: '小龍蝦', date: '06/25', amount: 365.00, description: '無備註', splitMembers: initialMembers },
   { id: 'p-out-5', category: 'pocket_money_out', title: '全家花生茶點', date: '06/26', amount: 57.00, description: '無備註', splitMembers: initialMembers },
   { id: 'p-out-6', category: 'pocket_money_out', title: '水果', date: '06/26', amount: 63.00, description: '無備註', splitMembers: initialMembers },
   { id: 'p-out-7', category: 'pocket_money_out', title: '滷味', date: '06/26', amount: 72.00, description: '無備註', splitMembers: initialMembers },
@@ -336,15 +336,15 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                 <div className="space-y-6">
                   <div className="bg-primary/10 rounded-[32px] p-6 border border-primary/20">
                     <div className="text-sm font-bold text-primary mb-2 uppercase tracking-widest text-center">零用金餘額</div>
-                    <div className="text-4xl font-black text-primary text-center">¥{pocketBalance.toLocaleString()}</div>
+                    <div className="text-4xl font-black text-primary text-center">¥{pocketBalance.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})}</div>
                     <div className="grid grid-cols-2 gap-4 mt-6">
                       <div className="text-center">
                         <div className="text-[10px] font-bold text-green-600 mb-1">總收入</div>
-                        <div className="font-bold text-green-700">¥{pocketIn.toLocaleString()}</div>
+                        <div className="font-bold text-green-700">¥{pocketIn.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})}</div>
                       </div>
                       <div className="text-center border-l">
                         <div className="text-[10px] font-bold text-error mb-1">總支出</div>
-                        <div className="font-bold text-error">¥{pocketOut.toLocaleString()}</div>
+                        <div className="font-bold text-error">¥{pocketOut.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})}</div>
                       </div>
                     </div>
                   </div>
@@ -412,11 +412,11 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                                 <span className="text-[10px] text-slate-400 font-bold block">本期合併應收退 (公積金與零用金合併結算)</span>
                                 {balance >= 0 ? (
                                   <span className="bg-emerald-50 text-emerald-700 text-xs px-2.5 py-0.5 rounded-full font-black inline-flex items-center gap-1 border border-emerald-100">
-                                    應退還 ¥{balance.toFixed(2)} (NT${Math.round(balance * 4.15).toLocaleString()})
+                                    應退還 ¥{balance.toFixed(1)} (NT${Math.round(balance * 4.15).toLocaleString()})
                                   </span>
                                 ) : (
                                   <span className="bg-amber-50 text-amber-700 text-xs px-2.5 py-0.5 rounded-full font-black inline-flex items-center gap-1 border border-amber-100">
-                                    應補繳 ¥{Math.abs(balance).toFixed(2)} (NT${Math.round(Math.abs(balance) * 4.15).toLocaleString()})
+                                    應補繳 ¥{Math.abs(balance).toFixed(1)} (NT${Math.round(Math.abs(balance) * 4.15).toLocaleString()})
                                   </span>
                                 )}
                               </div>
@@ -436,21 +436,21 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                                 <div className="space-y-1 text-[11px] font-bold text-slate-500">
                                   <div className="flex justify-between">
                                     <span>住宿代付分攤</span>
-                                    <span className="text-slate-700">¥{accomShare.toFixed(2)}</span>
+                                    <span className="text-slate-700">¥{accomShare.toFixed(1)}</span>
                                   </div>
                                   <div className="flex justify-between">
                                     <span>交通包車分攤</span>
-                                    <span className="text-slate-700">¥{transShare.toFixed(2)}</span>
+                                    <span className="text-slate-700">¥{transShare.toFixed(1)}</span>
                                   </div>
                                   <div className="h-px bg-slate-100 my-1" />
                                   <div className="flex justify-between text-slate-800 font-extrabold">
                                     <span>公積費用總攤</span>
-                                    <span>¥{commonCost.toFixed(2)}</span>
+                                    <span>¥{commonCost.toFixed(1)}</span>
                                   </div>
                                   <div className="flex justify-between font-black text-[11px] pt-0.5 border-t border-slate-50">
                                     <span>公積金結算結果</span>
                                     <span className={commonRefund >= 0 ? "text-emerald-600" : "text-amber-600"}>
-                                      {commonRefund >= 0 ? `應退 ¥${commonRefund.toFixed(2)}` : `應補 ¥${Math.abs(commonRefund).toFixed(2)}`}
+                                      {commonRefund >= 0 ? `應退 ¥${commonRefund.toFixed(1)}` : `應補 ¥${Math.abs(commonRefund).toFixed(1)}`}
                                     </span>
                                   </div>
                                 </div>
@@ -464,23 +464,23 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                                     隨手零用金
                                   </span>
                                   <span className="text-[9px] font-extrabold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">
-                                    {pocketInShare > 0 ? `已交預收 ¥${pocketInShare.toFixed(2)}` : '不另預收 (¥0)'}
+                                    {pocketInShare > 0 ? `已交預收 ¥${pocketInShare.toFixed(1)}` : '不另預收 (¥0.0)'}
                                   </span>
                                 </div>
                                 <div className="space-y-1 text-[11px] font-bold text-slate-500">
                                   <div className="flex justify-between">
                                     <span>已預交零用金</span>
-                                    <span className="text-emerald-600">¥{pocketInShare.toFixed(2)}</span>
+                                    <span className="text-emerald-600">¥{pocketInShare.toFixed(1)}</span>
                                   </div>
                                   <div className="flex justify-between">
                                     <span>實際零用支出均攤</span>
-                                    <span className="text-slate-700">¥{pocketOutShare.toFixed(2)}</span>
+                                    <span className="text-slate-700">¥{pocketOutShare.toFixed(1)}</span>
                                   </div>
                                   <div className="h-px bg-slate-100 my-1" />
                                   <div className="flex justify-between font-black text-[11px] pt-0.5 border-t border-slate-50">
                                     <span>零用金結算結果</span>
                                     <span className={pocketRefund >= 0 ? "text-emerald-600" : "text-amber-600"}>
-                                      {pocketRefund >= 0 ? `餘額應退 ¥${pocketRefund.toFixed(2)}` : `實際應補 ¥${Math.abs(pocketRefund).toFixed(2)}`}
+                                      {pocketRefund >= 0 ? `餘額應退 ¥${pocketRefund.toFixed(1)}` : `實際應補 ¥${Math.abs(pocketRefund).toFixed(1)}`}
                                     </span>
                                   </div>
                                 </div>
@@ -491,13 +491,13 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                             <div className="bg-[#005d90]/5 rounded-xl p-2.5 px-3 flex flex-wrap justify-between items-center text-xs font-black text-[#005d90] gap-2">
                               <span>全行程實際總應分攤 (公積 + 零用)</span>
                               <span className="text-sm">
-                                ¥{actualCost.toFixed(2)} 
+                                ¥{actualCost.toFixed(1)} 
                                 <span className="text-[10px] font-bold text-slate-400 ml-1.5">/ 折合約 NT${Math.round(actualCost * 4.15).toLocaleString()}</span>
                               </span>
                             </div>
                             
                             <div className="text-[10px] text-slate-400 italic font-medium px-1 text-center">
-                              說明：目前公積金預付 ¥2,000 已支付。零用金已付 ¥{pocketInShare.toFixed(2)}。由公積金結算應退 (¥{commonRefund.toFixed(2)}) 加上零用金結算 {(pocketRefund >= 0 ? '應退' : '應補')} (¥{Math.abs(pocketRefund).toFixed(2)}) 後，得出本次最終合併多退少補狀態。
+                              說明：目前公積金預付 ¥2,000 已支付。零用金已付 ¥{pocketInShare.toFixed(1)}。由公積金結算應退 (¥{commonRefund.toFixed(1)}) 加上零用金結算 {(pocketRefund >= 0 ? '應退' : '應補')} (¥{Math.abs(pocketRefund).toFixed(1)}) 後，得出本次最終合併多退少補狀態。
                             </div>
                           </div>
                         );
@@ -541,9 +541,9 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                             const totalStatusLabel = totalRefund >= 0 ? '本期合併應退還' : '本期合併應補繳';
                             
                             return `• ${m}:\n` +
-                                   `  - 【公積金部分】預付 ¥2,000 (已付款) | 實際應攤 ¥${commonCost.toFixed(2)} | 結算：${commonRefund >= 0 ? '應退' : '應補'} ¥${Math.abs(commonRefund).toFixed(2)}\n` +
-                                   `  - 【零用金部分】已交預收 ¥${pocketInShare.toFixed(2)} | 實際分攤 ¥${pocketOutShare.toFixed(2)} | 結算：${pocketRefund >= 0 ? '應退' : '應補'} ¥${Math.abs(pocketRefund).toFixed(2)}\n` +
-                                   `  - 【本期合併多退少補】：${totalStatusLabel} ¥${Math.abs(totalRefund).toFixed(2)} (折合約 NT$${Math.round(Math.abs(totalRefund) * 4.15).toLocaleString()})`;
+                                   `  - 【公積金部分】預付 ¥2,000 (已付款) | 實際應攤 ¥${commonCost.toFixed(1)} | 結算：${commonRefund >= 0 ? '應退' : '應補'} ¥${Math.abs(commonRefund).toFixed(1)}\n` +
+                                   `  - 【零用金部分】已交預收 ¥${pocketInShare.toFixed(1)} | 實際分攤 ¥${pocketOutShare.toFixed(1)} | 結算：${pocketRefund >= 0 ? '應退' : '應補'} ¥${Math.abs(pocketRefund).toFixed(1)}\n` +
+                                   `  - 【本期合併多退少補】：${totalStatusLabel} ¥${Math.abs(totalRefund).toFixed(1)} (折合約 NT$${Math.round(Math.abs(totalRefund) * 4.15).toLocaleString()})`;
                           }).join('\n\n');
 
                           const expenseItemLines = sortedExpenses
@@ -551,7 +551,7 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                             .map((e, idx) => {
                               const qtyPart = e.quantity ? ` [${e.quantity}${e.category === 'accommodation' ? '間' : '套'}]` : ' [1件]';
                               const descPart = e.description ? ` (${e.description})` : '';
-                              return `${idx + 1}. [${e.date}] ${e.title}${qtyPart}: ¥${e.amount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} (NT$${Math.round(e.amount * 4.15).toLocaleString()})${descPart}`;
+                              return `${idx + 1}. [${e.date}] ${e.title}${qtyPart}: ¥${e.amount.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} (NT$${Math.round(e.amount * 4.15).toLocaleString()})${descPart}`;
                             })
                             .join('\n');
 
@@ -560,7 +560,7 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                             .map((e, idx) => {
                               const typePart = e.category === 'pocket_money_in' ? '【預收】' : '【支出】';
                               const descPart = e.description ? ` (${e.description})` : '';
-                              return `${idx + 1}. [${e.date}] ${typePart}${e.title}: ¥${e.amount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} (NT$${Math.round(e.amount * 4.15).toLocaleString()})${descPart}`;
+                              return `${idx + 1}. [${e.date}] ${typePart}${e.title}: ¥${e.amount.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} (NT$${Math.round(e.amount * 4.15).toLocaleString()})${descPart}`;
                             })
                             .join('\n');
 
@@ -599,7 +599,7 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                       <div className="text-left md:text-right text-xs space-y-1 font-bold text-slate-500">
                         <div><span className="text-slate-400">約定匯率：</span>1 RMB = 4.15 台幣</div>
                         <div><span className="text-slate-400">已收大宗：</span>公積金 ¥2,000 / 人 (預付已完成)</div>
-                        <div><span className="text-slate-400">已收零用：</span>隨手零用金 ¥{(pocketIn / initialMembers.length).toLocaleString(undefined, {maximumFractionDigits: 2})} / 人 (預收已完成)</div>
+                        <div><span className="text-slate-400">已收零用：</span>隨手零用金 ¥{(pocketIn / initialMembers.length).toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} / 人 (預收已完成)</div>
                         <div><span className="text-slate-400">結算日期：</span>2026年6月28日</div>
                       </div>
                     </div>
@@ -629,18 +629,18 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                                   <div className="text-[10px] text-slate-400 font-bold">{exp.description}</div>
                                 </td>
                                 <td className="py-3 text-right font-bold text-slate-500">{exp.quantity ? `${exp.quantity} ${exp.category === 'accommodation' ? '間' : '套'}` : '1 件'}</td>
-                                <td className="py-3 text-right font-black text-slate-800">¥{exp.amount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                                <td className="py-3 text-right font-black text-slate-800">¥{exp.amount.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})}</td>
                                 <td className="py-3 text-right font-black text-[#005d90]">NT${Math.round(exp.amount * 4.15).toLocaleString()}</td>
                               </tr>
                             ))}
                             <tr className="border-t-2 border-slate-900 bg-slate-50/50">
                               <td colSpan={3} className="py-3.5 font-black text-slate-800 text-sm">付款大計合計 (Grand Total)</td>
-                              <td className="py-3.5 text-right font-black text-primary text-sm">¥{grandTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                              <td className="py-3.5 text-right font-black text-primary text-sm">¥{grandTotal.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})}</td>
                               <td className="py-3.5 text-right font-black text-[#005d90] text-sm">NT${Math.round(grandTotal * 4.15).toLocaleString()}</td>
                             </tr>
                             <tr className="bg-primary/5 text-xs">
                               <td colSpan={3} className="py-3 font-black text-primary">八人均攤應付額 (Per Person Avg)</td>
-                              <td className="py-3 text-right font-black text-primary">¥{(grandTotal / initialMembers.length).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                              <td className="py-3 text-right font-black text-primary">¥{(grandTotal / initialMembers.length).toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})}</td>
                               <td className="py-3 text-right font-black text-[#005d90]">NT${Math.round((grandTotal / initialMembers.length) * 4.15).toLocaleString()}</td>
                             </tr>
                           </tbody>
@@ -677,23 +677,23 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                                     {exp.category === 'pocket_money_in' ? '收入(預收)' : '支出(實支)'}
                                   </span>
                                 </td>
-                                <td className="py-2.5 text-right font-black text-slate-800">¥{exp.amount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                                <td className="py-2.5 text-right font-black text-slate-800">¥{exp.amount.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})}</td>
                                 <td className="py-2.5 text-right font-black text-[#005d90]">NT${Math.round(exp.amount * 4.15).toLocaleString()}</td>
                               </tr>
                             ))}
                             <tr className="border-t-2 border-slate-900 bg-slate-50/50">
                               <td colSpan={3} className="py-2.5 font-black text-slate-800 text-xs">零用金總預收 (Total In)</td>
-                              <td className="py-2.5 text-right font-black text-emerald-700 text-xs">¥{pocketIn.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                              <td className="py-2.5 text-right font-black text-emerald-700 text-xs">¥{pocketIn.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})}</td>
                               <td className="py-2.5 text-right font-black text-[#005d90] text-xs">NT${Math.round(pocketIn * 4.15).toLocaleString()}</td>
                             </tr>
                             <tr className="bg-slate-50/50">
                               <td colSpan={3} className="py-2.5 font-black text-slate-800 text-xs">零用金總支出 (Total Out)</td>
-                              <td className="py-2.5 text-right font-black text-amber-700 text-xs">¥{pocketOut.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                              <td className="py-2.5 text-right font-black text-amber-700 text-xs">¥{pocketOut.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})}</td>
                               <td className="py-2.5 text-right font-black text-[#005d90] text-xs">NT${Math.round(pocketOut * 4.15).toLocaleString()}</td>
                             </tr>
                             <tr className="bg-primary/5 text-xs">
                               <td colSpan={3} className="py-2.5 font-black text-primary">零用金結餘剩餘 (Balance)</td>
-                              <td className="py-2.5 text-right font-black text-primary">¥{pocketBalance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                              <td className="py-2.5 text-right font-black text-primary">¥{pocketBalance.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})}</td>
                               <td className="py-2.5 text-right font-black text-[#005d90]">NT${Math.round(pocketBalance * 4.15).toLocaleString()}</td>
                             </tr>
                           </tbody>
@@ -794,22 +794,22 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                                   <td className="py-2.5 px-2 font-black text-slate-800 text-left border-r border-slate-200">{m}</td>
                                   
                                   {/* 公積金 */}
-                                  <td className="py-2.5 px-1.5 text-slate-400 font-bold bg-[#005d90]/5">¥2,000</td>
-                                  <td className="py-2.5 px-1.5 text-slate-800 font-bold bg-[#005d90]/5">¥{commonCost.toFixed(2)}</td>
+                                  <td className="py-2.5 px-1.5 text-slate-400 font-bold bg-[#005d90]/5">¥2,000.0</td>
+                                  <td className="py-2.5 px-1.5 text-slate-800 font-bold bg-[#005d90]/5">¥{commonCost.toFixed(1)}</td>
                                   <td className={`py-2.5 px-1.5 font-black border-r border-slate-200 ${commonRefund >= 0 ? 'text-emerald-700 bg-emerald-500/5' : 'text-amber-700 bg-amber-500/5'}`}>
-                                    {commonRefund >= 0 ? `退 ¥${commonRefund.toFixed(2)}` : `補 ¥${Math.abs(commonRefund).toFixed(2)}`}
+                                    {commonRefund >= 0 ? `退 ¥${commonRefund.toFixed(1)}` : `補 ¥${Math.abs(commonRefund).toFixed(1)}`}
                                   </td>
                                   
                                   {/* 零用金 */}
-                                  <td className="py-2.5 px-1.5 text-slate-400 font-bold bg-emerald-500/5">¥{pocketInShare.toFixed(2)}</td>
-                                  <td className="py-2.5 px-1.5 text-slate-800 font-bold bg-emerald-800/5">¥{pocketOutShare.toFixed(2)}</td>
+                                  <td className="py-2.5 px-1.5 text-slate-400 font-bold bg-emerald-500/5">¥{pocketInShare.toFixed(1)}</td>
+                                  <td className="py-2.5 px-1.5 text-slate-800 font-bold bg-emerald-800/5">¥{pocketOutShare.toFixed(1)}</td>
                                   <td className={`py-2.5 px-1.5 font-black border-r border-slate-200 ${pocketRefund >= 0 ? 'text-emerald-700 bg-emerald-500/5' : 'text-amber-700 bg-amber-500/5'}`}>
-                                    {pocketRefund >= 0 ? `退 ¥${pocketRefund.toFixed(2)}` : `補 ¥${Math.abs(pocketRefund).toFixed(2)}`}
+                                    {pocketRefund >= 0 ? `退 ¥${pocketRefund.toFixed(1)}` : `補 ¥${Math.abs(pocketRefund).toFixed(1)}`}
                                   </td>
 
                                   {/* 明細合併 */}
                                   <td className={`py-2.5 px-2 font-black text-center ${totalRefund >= 0 ? 'text-[#005d90] bg-[#005d90]/5' : 'text-amber-800 bg-amber-500/10'}`}>
-                                    {totalRefund >= 0 ? `應退 ¥${totalRefund.toFixed(2)}` : `應補 ¥${Math.abs(totalRefund).toFixed(2)}`}
+                                    {totalRefund >= 0 ? `應退 ¥${totalRefund.toFixed(1)}` : `應補 ¥${Math.abs(totalRefund).toFixed(1)}`}
                                     <div className="text-[9px] font-bold text-slate-400 mt-0.5">
                                       (NT$${Math.abs(totalRefundTwd).toLocaleString()})
                                     </div>
@@ -876,8 +876,6 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                     
                     {/* Scrollable Content */}
                     <div className="flex-1 overflow-y-auto px-8 py-6 space-y-6 pb-32">
-                      <h3 className="text-2xl font-bold text-primary flex items-center gap-2">編輯項目</h3>
-                      
                       <div className="space-y-5">
                         <div className="grid grid-cols-2 gap-4">
                           <div>
@@ -913,19 +911,20 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                             <label className="text-[10px] font-bold text-on-surface-variant uppercase mb-2 block tracking-widest">單價 (¥)</label>
                             <input 
                               type="number" 
-                              inputMode="numeric"
+                              step="0.1"
+                              inputMode="decimal"
                               className="w-full bg-surface-container rounded-2xl px-5 py-4 font-bold border-2 border-transparent focus:border-primary/20 transition-all outline-none text-lg"
                               value={editForm.unitPrice === 0 ? '' : editForm.unitPrice ?? ''} 
                               placeholder="0"
                               onChange={e => {
                                 const val = e.target.value;
-                                const up = val === '' ? 0 : Math.round(parseFloat(val) || 0);
+                                const up = val === '' ? 0 : parseFloat(parseFloat(val).toFixed(1)) || 0;
                                 setEditForm(prev => {
                                   const newQty = prev.quantity ?? 1;
                                   return { 
                                     ...prev, 
                                     unitPrice: up, 
-                                    amount: up * newQty 
+                                    amount: parseFloat((up * newQty).toFixed(1))
                                   };
                                 });
                               }}
@@ -947,7 +946,7 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                                   return { 
                                     ...prev, 
                                     quantity: q, 
-                                    amount: newUp * q 
+                                    amount: parseFloat((newUp * q).toFixed(1))
                                   };
                                 });
                               }}
@@ -958,13 +957,14 @@ export default function BudgetModal({ isOpen, onClose, expenses, setExpenses }: 
                           <label className="text-[10px] font-bold text-on-surface-variant uppercase mb-2 block tracking-widest">總金額 (¥)</label>
                           <input 
                             type="number" 
-                            inputMode="numeric"
+                            step="0.1"
+                            inputMode="decimal"
                             className="w-full bg-surface-container rounded-2xl px-5 py-4 font-black border-2 border-transparent focus:border-primary/20 transition-all outline-none text-2xl text-primary"
                             value={editForm.amount === 0 ? '' : editForm.amount ?? ''} 
                             placeholder="0"
                             onChange={e => {
                               const val = e.target.value;
-                              const amt = val === '' ? 0 : Math.round(parseFloat(val) || 0);
+                              const amt = val === '' ? 0 : parseFloat(parseFloat(val).toFixed(1)) || 0;
                               setEditForm(prev => ({ ...prev, amount: amt }));
                             }}
                           />
@@ -1051,18 +1051,18 @@ function SummaryCard({ grandTotal, accom, trans, remainingCommonFund }: any) {
           </div>
         </div>
         <div className="flex items-baseline gap-1">
-          <span className="text-4xl font-black text-primary">¥{Math.round(grandTotal).toLocaleString()}</span>
+          <span className="text-4xl font-black text-primary">¥{grandTotal.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})}</span>
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
         <div className="bg-white p-4 rounded-2xl shadow-sm border border-black/5">
           <div className="flex items-center gap-2 text-[10px] font-bold text-on-surface-variant/60 mb-1 uppercase tracking-wider"><Hotel size={14} className="text-[#005d90]" /> 住宿總額</div>
-          <span className="text-lg font-black text-slate-800">¥{Math.round(accom).toLocaleString()}</span>
+          <span className="text-lg font-black text-slate-800">¥{accom.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})}</span>
         </div>
         <div className="bg-white p-4 rounded-2xl shadow-sm border border-black/5">
           <div className="flex items-center gap-2 text-[10px] font-bold text-on-surface-variant/60 mb-1 uppercase tracking-wider"><Car size={14} className="text-[#005d90]" /> 交通總額</div>
-          <span className="text-lg font-black text-slate-800">¥{Math.round(trans).toLocaleString()}</span>
+          <span className="text-lg font-black text-slate-800">¥{trans.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})}</span>
         </div>
       </div>
 
@@ -1070,20 +1070,20 @@ function SummaryCard({ grandTotal, accom, trans, remainingCommonFund }: any) {
       <div className="bg-white p-4 rounded-2xl border border-primary/10 space-y-2.5 shadow-sm">
         <div className="text-xs font-black text-primary border-b pb-1.5 border-primary/5 flex justify-between">
           <span>公積金明細 (2,000 / 人)</span>
-          <span>8 人共 ¥16,000</span>
+          <span>8 人共 ¥16,000.0</span>
         </div>
         <div className="flex justify-between items-center text-xs font-bold text-slate-500">
           <span>預交總公積金</span>
-          <span>¥16,000</span>
+          <span>¥16,000.0</span>
         </div>
         <div className="flex justify-between items-center text-xs font-bold text-slate-500">
           <span>已支付 (住宿 + 交通)</span>
-          <span className="text-red-500">- ¥{Math.round(grandTotal).toLocaleString()}</span>
+          <span className="text-red-500">- ¥{grandTotal.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})}</span>
         </div>
         <div className="h-px bg-slate-100 my-1" />
         <div className="flex justify-between items-center text-sm font-black text-[#00677d]">
           <span>公積金剩餘</span>
-          <span>¥{Math.round(remainingCommonFund).toLocaleString()}</span>
+          <span>¥{remainingCommonFund.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})}</span>
         </div>
       </div>
     </div>
@@ -1125,14 +1125,14 @@ function ExpenseSection({ title, icon, items, color, onEdit, onDelete, onAdd, is
                 <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1">
                   {exp.unitPrice !== undefined && exp.quantity !== undefined && (
                     <span className="text-[10px] font-bold text-[#00677d] bg-[#00677d]/5 px-1.5 py-0.5 rounded">
-                      ¥{exp.unitPrice} × {exp.quantity}
+                      ¥{exp.unitPrice.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})} × {exp.quantity}
                     </span>
                   )}
                   <p className="text-xs text-on-surface-variant line-clamp-1 italic">{exp.description || '無備註'}</p>
                 </div>
               </div>
               <div className="text-right ml-4">
-                <span className="text-2xl font-black tabular-nums tracking-tighter">¥{exp.amount.toLocaleString()}</span>
+                <span className="text-2xl font-black tabular-nums tracking-tighter">¥{exp.amount.toLocaleString(undefined, {minimumFractionDigits: 1, maximumFractionDigits: 1})}</span>
               </div>
             </div>
           </div>
