@@ -57,9 +57,13 @@ export default function App() {
         fbExpenses.push(d.data() as ExpenseItem);
       });
 
-      if (fbExpenses.length === 0 && snapshot.metadata.fromCache === false) {
-        // Firestore is completely empty. Let's seed with current local state (preserving entered pocket money)
-        console.log('Firestore is empty. Seeding with current local state...');
+      // Robust check: if the database is completely empty OR is in an unseeded/partially-seeded state
+      // (e.g. missing major accommodation items like ID '1' and has very few total items)
+      const hasPrimaryItem = fbExpenses.some(e => e.id === '1');
+      const isUnseeded = fbExpenses.length === 0 || (!hasPrimaryItem && fbExpenses.length < 5);
+
+      if (isUnseeded && snapshot.metadata.fromCache === false) {
+        console.log('Firestore is unseeded or partially unseeded. Seeding missing items from local state...');
         const batch = writeBatch(db);
         
         let localData = initialExpenses;
@@ -69,12 +73,15 @@ export default function App() {
             localData = JSON.parse(saved);
           }
         } catch (e) {
-          console.warn('Failed to parse localStorage on empty seed:', e);
+          console.warn('Failed to parse localStorage on seed:', e);
         }
 
+        // Only seed items that do not already exist in Firestore
         localData.forEach((item) => {
-          const docRef = doc(db, 'expenses', item.id);
-          batch.set(docRef, item);
+          if (!fbExpenses.some((fbItem) => fbItem.id === item.id)) {
+            const docRef = doc(db, 'expenses', item.id);
+            batch.set(docRef, item);
+          }
         });
         
         try {
@@ -128,6 +135,8 @@ export default function App() {
           console.warn('Failed to write to LocalStorage:', e);
         }
       }
+    }, (error) => {
+      console.error('Firestore onSnapshot subscription failed:', error);
     });
 
     return () => unsubscribe();
